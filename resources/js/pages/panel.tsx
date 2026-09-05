@@ -1,5 +1,5 @@
 import { Head } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { SubmitEvent } from "react";
 
 interface LaravelResponseForTest {
     message?: string;
@@ -9,50 +9,29 @@ interface LaravelResponseForTest {
 }
 
 export default function Panel() {
-    const [response, setResponse] = useState<LaravelResponseForTest | null>(
-        null,
-    );
-
-    useEffect(() => {
-        fetch("/api/v1/users", {
-            headers: {
-                "content-type": "application/json",
-            },
-            method: "get",
-            // body: JSON.stringify({
-            //     email: "pouya@gmail.com",
-            //     name: "pouya",
-            //     password: "A1234a1234",
-            // }),
-        })
-            .then((d) => d.json())
-            .then((d) => setResponse(d))
-            .catch(console.error);
-    }, []);
-
-    if (!response) return <p>Loading...</p>;
+    const handleCreateUser = (e: SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("Hello WOORLD");
+    };
 
     return (
         <>
             <Head title="Panel" />
             <div>
-                {response?.message && (
-                    <p className="text-neutral-700">{response.message}</p>
-                )}
+                <div>Hello world</div>
 
-                {response?.errors && (
-                    <ul>
-                        <li>
-                            <p>{response?.errors?.email}</p>
-                        </li>
-                        <li>
-                            <p>{response?.errors?.name}</p>
-                        </li>
-                        <li>
-                            <p>{response?.errors?.password}</p>
-                        </li>
-                    </ul>
-                )}
+                <form
+                    onSubmit={(e) => handleCreateUser(e)}
+                    className="bg-stone-50 flex flex-col gap-4 w-50 mt-10 container mx-5"
+                >
+                    <input className="border" placeholder="name" />
+                    <input className="border" placeholder="email" />
+                    <input className="border" placeholder="password" />
+
+                    <button className="border bg-stone-100 rounded">
+                        Submit
+                    </button>
+                </form>
             </div>
         </>
     );
