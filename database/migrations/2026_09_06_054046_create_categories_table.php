@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->jsonb('meta')->nullable();
             $table->boolean('is_active')->default(false)->index();
-            $table->foreignId('parent_id')->constrained('categories')->nullOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->timestamps();
         });
     }
