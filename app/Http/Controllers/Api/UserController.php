@@ -66,4 +66,21 @@ class UserController extends Controller
             'message' => 'user is deleted successfully',
         ]);
     }
+
+    public function changeStatus(Request $request, User $user): JsonResponse
+    {
+        $validated = $request->validate([
+            'is_active' => ['required', 'boolean']
+        ]);
+        $user->is_active = $validated['is_active'];
+        $user->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'user status is changed!',
+            'data' => [
+                'userId' => $user->id,
+                'isActive' => $user->is_active
+            ]
+        ]);
+    }
 }
