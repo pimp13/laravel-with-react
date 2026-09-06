@@ -27,13 +27,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Category extends Model
 {
-    protected function casts(): array
-    {
-        return [
-            'meta'      => 'array',
-            'is_active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'meta' => 'array',
+        'is_active' => 'boolean',
+    ];
 
     public function parent(): BelongsTo
     {

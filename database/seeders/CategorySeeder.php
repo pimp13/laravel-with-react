@@ -146,10 +146,10 @@ class CategorySeeder extends Seeder
                 'title'     => $title,
                 'slug'      => Str::slug($title) . '-' . ($index + 1),
                 'is_active' => (bool) rand(0, 1),
-                'meta'      => json_encode([
+                'meta'      => [
                     'description' => "زیرمجموعه {$title} از دسته {$parent->title}",
                     'icon'        => 'tag',
-                ]),
+                ],
             ]);
 
             $created++;
@@ -166,10 +166,10 @@ class CategorySeeder extends Seeder
                 'title'     => $parent->title . ' - جزئیات ' . ($created + 1),
                 'slug'      => Str::slug($parent->title) . '-detail-' . ($created + 1),
                 'is_active' => true,
-                'meta'      => json_encode([
+                'meta'      => [
                     'description' => "سطح سوم از {$parent->title}",
                     'icon'        => 'circle',
-                ]),
+                ],
             ]);
 
             $created++;

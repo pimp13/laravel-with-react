@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -12,7 +13,16 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::orderByDesc('id')
+            ->where('parent_id', null)
+            ->with('childrenRecursive')
+            ->get()
+            ->makeHidden(['updated_at']);
+
+        return response()->json([
+            'success' => true,
+            'data' => $categories
+        ]);
     }
 
     /**
@@ -26,7 +36,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
         //
     }
