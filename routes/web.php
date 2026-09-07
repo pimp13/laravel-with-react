@@ -8,3 +8,7 @@ Route::inertia('/', 'welcome')->name('home');
 Route::get('/panel', function () {
     return Inertia::render('panel');
 });
+
+Route::get('/blog', function () {
+    return Inertia::render('blog');
+});
