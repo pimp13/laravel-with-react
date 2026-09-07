@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "My Application API",
+        "title": "Laravel API Docs",
         "description": "REST API documentation",
         "version": "1.0.0"
     },
@@ -16,6 +16,43 @@
                 "responses": {
                     "200": {
                         "description": "Posts retrieved successfully"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Store a newly created resource in storage.",
+                "operationId": "c599878a9a0c89930a40d45748861909",
+                "responses": {
+                    "200": {
+                        "description": "Posts created successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/posts/{id}": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Display the specified resource.",
+                "operationId": "0069cd5c0ca8e03cba742cbb20274f9f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Post ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Post retrieved successfully"
                     }
                 }
             }

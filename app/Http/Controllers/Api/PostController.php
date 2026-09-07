@@ -39,6 +39,16 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    #[OA\Post(
+        path: '/api/v1/posts',
+        tags: ['Posts'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Posts created successfully'
+            )
+        ]
+    )]
     public function store(CreatePostRequest $request)
     {
         $bodyData = [
@@ -86,6 +96,27 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
+    #[OA\Get(
+        path: '/api/v1/posts/{id}',
+        tags: ['Posts'],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'Post ID',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(
+                    type: 'integer'
+                )
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Post retrieved successfully'
+            )
+        ]
+    )]
     public function show(Post $post)
     {
         $post->load(['category', 'author']);
