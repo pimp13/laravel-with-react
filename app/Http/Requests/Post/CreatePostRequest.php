@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Post;
 
 use App\Enums\Visibility;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

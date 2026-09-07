@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -53,6 +54,20 @@ class Post extends Model
         'is_active' => true,
         'published_at' => null,
     ];
+
+    protected $appends = [
+        'featured_image_url',
+    ];
+
+    protected function featuredImageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->featured_image
+                ? asset('storage' . DIRECTORY_SEPARATOR . $this->featured_image)
+                : null,
+        );
+    }
+
 
     public function category(): BelongsTo
     {
@@ -135,7 +150,7 @@ class Post extends Model
      * Scope برای پست‌های یک دسته‌بندی
      */
     #[Scope]
-    public function scopeByCategory(Builder $query, int $categoryId)
+    public function byCategory(Builder $query, int $categoryId)
     {
         return $query->where('category_id', $categoryId);
     }
@@ -144,7 +159,7 @@ class Post extends Model
      * Scope برای جستجو در عنوان و محتوا
      */
     #[Scope]
-    public function scopeSearch(Builder $query, string $searchTerm)
+    public function search(Builder $query, string $searchTerm)
     {
         return $query->where(function ($q) use ($searchTerm) {
             $q->where('title', 'LIKE', "%{$searchTerm}%")
@@ -157,7 +172,7 @@ class Post extends Model
      * Scope برای پست‌های اخیر
      */
     #[Scope]
-    public function scopeRecent(Builder $query, int $limit = 10)
+    public function recent(Builder $query, int $limit = 10)
     {
         return $query->published()
             ->orderBy('published_at', 'desc')
