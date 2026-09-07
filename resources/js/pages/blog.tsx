@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 // ==================== Types (مطابق مدل Laravel شما) ====================
 interface Post {
@@ -27,6 +27,12 @@ interface Post {
         name: string;
         slug: string;
     };
+}
+
+interface ApiLayout<T = any> {
+    data?: T;
+    success?: boolean;
+    message?: string;
 }
 
 // ==================== Mock Data ====================
@@ -346,6 +352,14 @@ const EmptyState = () => (
 export default function BlogPostsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
+    const [postsData, setPostsData] = useState<ApiLayout<Post[]> | null>(null);
+
+    useEffect(() => {
+        fetch("/api/v1/posts")
+            .then((res) => res.json())
+            .then(setPostsData)
+            .catch(console.error);
+    }, []);
 
     // استخراج دسته‌بندی‌های یکتا
     const categories = useMemo(() => {
@@ -380,6 +394,10 @@ export default function BlogPostsPage() {
             return matchesSearch && matchesCategory && post.is_active;
         });
     }, [searchQuery, selectedCategory]);
+
+    if (!postsData) return <div>Loading...</div>;
+    if (!postsData?.data || postsData.data.length === 0)
+        return <div>Post Not Found!</div>;
 
     return (
         <div
@@ -465,7 +483,7 @@ export default function BlogPostsPage() {
 
                 {/* Posts Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredPosts.length > 0 ? (
+                    {postsData.data.length > 0 ? (
                         filteredPosts.map((post) => (
                             <PostCard key={post.id} post={post} />
                         ))
