@@ -10,12 +10,23 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use OpenApi\Attributes as OA;
 
 class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    #[OA\Get(
+        path: '/api/v1/posts',
+        tags: ['Posts'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Posts retrieved successfully'
+            )
+        ]
+    )]
     public function index()
     {
         $posts = Post::with(['category', 'author'])->get();
