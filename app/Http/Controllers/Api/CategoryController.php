@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -28,9 +29,22 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        //
+        $bodyData = [
+            'title' => $request->title,
+            'is_active' => $request->is_active,
+            'parent_id' => $request->parent_id,
+            'slug' => $request->slug,
+        ];
+        $bodyData['meta'] = $request->description ? ['description' => $request->description] : null;
+        $category = Category::create($bodyData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'category is created successfully',
+            'data' => $category,
+        ]);
     }
 
     /**
