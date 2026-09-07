@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\CreatePostRequest;
+use App\Http\Requests\Post\UpdatePostRequest;
 use App\Models\Post;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -64,29 +68,73 @@ class PostController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'a new post created successfully',
-            'data' => [
-                ...$post->toArray(),
-                'featured_image_url' => $post->featured_image
-                    ? asset('storage' . DIRECTORY_SEPARATOR . $post->featured_image)
-                    : null,
-            ],
+            'data' => $post
         ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Post $post)
     {
-        //
+        $post->load(['category', 'author']);
+        return response()->json([
+            'success' => true,
+            'data' => $post
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+
+        $bodyData = [
+            'title' => $request->title,
+            'slug' => Post::generateUniqueSlug(
+                $request->slug,
+                $request->title,
+                $post->id
+            ),
+            'content' => $request->input('content'),
+            'is_active' => $request->boolean('is_active'),
+            'user_id' => $request->user_id,
+            'category_id' => $request->category_id,
+            'visibility' => $request->visibility,
+            'excerpt' => $request->excerpt,
+            'published_at' => $request->published_at,
+        ];
+        $bodyData['meta'] = array_filter([
+            'tag' => $request->tag,
+            ...($request->meta ?? []),
+        ]) ?: null;
+
+        if ($request->hasFile('featured_image')) {
+            $newImage = $request
+                ->file('featured_image')
+                ->store('images', 'public');
+            if (
+                $post->featured_image &&
+                !str_starts_with($post->featured_image, 'http://') &&
+                !str_starts_with($post->featured_image, 'https://')
+            ) {
+                Storage::disk('public')->delete($post->featured_image);
+            }
+            $bodyData['featured_image'] = $newImage;
+        }
+
+        DB::transaction(function () use ($post, $bodyData) {
+            $post->update($bodyData);
+        });
+
+        $post->refresh();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'updated suucessfully',
+            'data' => $post
+        ]);
     }
 
     /**
