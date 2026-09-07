@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Visibility;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -43,6 +44,7 @@ class Post extends Model
     protected $casts = [
         'meta' => 'object',
         'is_active' => 'boolean',
+        'visibility' => Visibility::class,
     ];
 
     protected $attributes = [

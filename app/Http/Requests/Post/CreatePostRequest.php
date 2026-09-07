@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Post;
 
+use App\Enums\Visibility;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreatePostRequest extends FormRequest
 {
@@ -29,10 +31,10 @@ class CreatePostRequest extends FormRequest
             'is_active' => 'nullable|boolean',
             'user_id' => 'required|numeric|exists:users,id',
             'category_id' => 'required|numeric|exists:categories,id',
-            'visibility' => 'required|',
-            'excerpt',
-            'published_at',
-            'featured_image',
+            'visibility' => ['required', Rule::enum(Visibility::class)],
+            'excerpt' => 'nullable|string',
+            'published_at' => 'nullable|date',
+            'featured_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 }
