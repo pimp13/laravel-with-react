@@ -26,7 +26,7 @@ class CreatePostRequest extends FormRequest
     {
         return [
             'title' => 'required|string|min:4|max:190',
-            'slug' => 'required|string|min:4|max:190|unique:posts,slug',
+            'slug' => 'nullable|string|min:4|max:190|unique:posts,slug',
             'content' => 'required',
             'is_active' => 'nullable|boolean',
             'user_id' => 'required|numeric|exists:users,id',

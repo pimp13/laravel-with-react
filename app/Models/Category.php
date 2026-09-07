@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -55,5 +56,25 @@ class Category extends Model
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class, 'category_id');
+    }
+
+    public static function generateUniqueSlug(?string $slug, string $title, ?int $ignoreId = null): string
+    {
+        $baseSlug = $slug ? Str::slug($slug) : Str::slug($title);
+        if (empty($baseSlug)) {
+            $baseSlug = Str::slug($title) ?: 'item';
+        }
+
+        $uniqueSlug = $baseSlug;
+        $counter = 1;
+        while (
+            static::where('slug', $uniqueSlug)
+            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()
+        ) {
+            $uniqueSlug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+        return $uniqueSlug;
     }
 }

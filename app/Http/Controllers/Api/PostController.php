@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Post\CreatePostRequest;
+use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -18,11 +21,53 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreatePostRequest $request)
     {
         $bodyData = [
-            ''
+            'title' => $request->title,
+            'slug' => Post::generateUniqueSlug(
+                $request->slug,
+                $request->title
+            ),
+            'content' => $request->input('content'),
+            'is_active' => $request->boolean('is_active'),
+            'user_id' => $request->user_id,
+            'category_id' => $request->category_id,
+            'visibility' => $request->visibility,
+            'excerpt' => $request->excerpt,
+            'published_at' => $request->published_at,
         ];
+
+        $bodyData['meta'] = array_filter([
+            'tag' => $request->tag,
+            ...($request->meta ?? []),
+        ]) ?: null;
+        // $bodyData['meta'] = $request->meta ?: (
+        //     $request->tag
+        //     ? ['tag' => $request->tag]
+        //     : null
+        // );
+
+        if ($request->hasFile('featured_image')) {
+            $bodyData['featured_image'] = $request
+                ->file('featured_image')
+                ->store('images', 'public');
+        } else {
+            $bodyData['featured_image'] = 'https://placehold.co/600x400';
+        }
+
+        $post = Post::create($bodyData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'a new post created successfully',
+            'data' => [
+                ...$post->toArray(),
+                'featured_image_url' => $post->featured_image
+                    ? asset('storage' . DIRECTORY_SEPARATOR . $post->featured_image)
+                    : null,
+            ],
+        ]);
     }
 
     /**

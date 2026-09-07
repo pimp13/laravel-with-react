@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -61,6 +62,26 @@ class Post extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public static function generateUniqueSlug(?string $slug, string $title, ?int $ignoreId = null): string
+    {
+        $baseSlug = $slug ? Str::slug($slug) : Str::slug($title);
+        if (empty($baseSlug)) {
+            $baseSlug = Str::slug($title) ?: 'item';
+        }
+
+        $uniqueSlug = $baseSlug;
+        $counter = 1;
+        while (
+            static::where('slug', $uniqueSlug)
+            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()
+        ) {
+            $uniqueSlug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+        return $uniqueSlug;
     }
 
     /**
