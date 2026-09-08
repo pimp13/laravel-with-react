@@ -1,5 +1,3 @@
-// create-article-v2.tsx
-
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -11,6 +9,7 @@ import Underline from "@tiptap/extension-underline";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Highlight } from "@tiptap/extension-highlight";
+import { clamp, countOccurrences, countWords, estimateReadingTime, extractHeadings, extractImages, extractLinks, generateSlug, getDefaultCanonical, getSeoStatus, getStatusClass, isInternalUrl, isValidHttpUrl, normalizeText, SITE_URL, stripHtml } from "@/lib/helpers";
 
 /**
  * WordPress / Yoast / RankMath-style post editor.
@@ -122,21 +121,6 @@ interface SeoCheck {
   points: number;
 }
 
-interface HeadingInfo {
-  level: number;
-  text: string;
-}
-
-interface LinkInfo {
-  href: string;
-  text: string;
-}
-
-interface ImageInfo {
-  src: string;
-  alt: string;
-}
-
 interface Api {
   createPost: (payload: unknown) => Promise<unknown>;
   uploadImage: (
@@ -155,126 +139,6 @@ interface Api {
 /* Helpers                                                                    */
 /* -------------------------------------------------------------------------- */
 
-// const SITE_URL =
-//   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ||
-//   "https://example.com";
-const SITE_URL = "https://example.com";
-
-const BLOG_PATH = "/blog";
-
-const normalizeText = (value: string) =>
-  value
-    .toLocaleLowerCase("fa-IR")
-    .replace(/ي/g, "ی")
-    .replace(/ك/g, "ک")
-    .replace(/\u200c/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-const stripHtml = (html: string) => {
-  if (!html) return "";
-
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style[\s\S]*?<\/style>/gi, " ")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
-    .replace(/\s+/g, " ")
-    .trim();
-};
-
-const countWords = (text: string) => {
-  const clean = stripHtml(text);
-  if (!clean) return 0;
-  return clean.split(/\s+/).filter(Boolean).length;
-};
-
-const estimateReadingTime = (html: string) =>
-  Math.max(1, Math.ceil(countWords(html) / 200));
-
-const countOccurrences = (text: string, keyword: string) => {
-  const normalizedText = normalizeText(text);
-  const normalizedKeyword = normalizeText(keyword);
-
-  if (!normalizedText || !normalizedKeyword) return 0;
-
-  return normalizedText.split(normalizedKeyword).length - 1;
-};
-
-const generateSlug = (title: string) =>
-  title
-    .trim()
-    .toLocaleLowerCase("fa-IR")
-    .replace(/[^\p{L}\p{N}\s-]/gu, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-
-const extractHeadings = (html: string): HeadingInfo[] =>
-  [...html.matchAll(/<h([1-6])[^>]*>([\s\S]*?)<\/h\1>/gi)].map((match) => ({
-    level: Number(match[1]),
-    text: stripHtml(match[2]),
-  }));
-
-const extractLinks = (html: string): LinkInfo[] =>
-  [
-    ...html.matchAll(/<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi),
-  ].map((match) => ({
-    href: match[1],
-    text: stripHtml(match[2]),
-  }));
-
-const extractImages = (html: string): ImageInfo[] =>
-  [...html.matchAll(/<img[^>]*src=["']([^"']+)["'][^>]*>/gi)].map(
-    (match) => ({
-      src: match[1],
-      alt: match[0].match(/alt=["']([^"']*)["']/i)?.[1]?.trim() || "",
-    }),
-  );
-
-const isInternalUrl = (href: string) => {
-  if (href.startsWith("/") && !href.startsWith("//")) return true;
-
-  try {
-    return new URL(href).origin === new URL(SITE_URL).origin;
-  } catch {
-    return false;
-  }
-};
-
-const isValidHttpUrl = (value: string) => {
-  if (!value.trim()) return true;
-
-  try {
-    const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
-};
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value));
-
-const getDefaultCanonical = (slug: string) =>
-  slug ? `${SITE_URL}${BLOG_PATH}/${slug}` : "";
-
-const getSeoStatus = (score: number) => {
-  if (score >= 85) return "عالی";
-  if (score >= 70) return "خوب";
-  if (score >= 50) return "نیازمند بهبود";
-  return "ضعیف";
-};
-
-const getStatusClass = (score: number) => {
-  if (score >= 85) return "text-emerald-600";
-  if (score >= 70) return "text-blue-600";
-  if (score >= 50) return "text-amber-600";
-  return "text-red-600";
-};
 
 /* -------------------------------------------------------------------------- */
 /* Initial data                                                               */
