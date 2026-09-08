@@ -2858,7 +2858,7 @@ export default function CreatePostPage() {
 
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <h3 className="mb-4 font-semibold text-slate-800">
-                Google Preview
+                پیش‌نمایش گوگل
               </h3>
 
               <div className="space-y-1">
@@ -2888,7 +2888,7 @@ export default function CreatePostPage() {
 
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <h3 className="mb-4 font-semibold text-slate-800">
-                Social Preview
+                پیش‌نمایش محتوا
               </h3>
 
               <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
