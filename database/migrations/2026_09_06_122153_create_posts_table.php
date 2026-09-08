@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Visibility;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,11 +20,14 @@ return new class extends Migration
             $table->text('content');
             $table->string('excerpt')->nullable();
             $table->string('featured_image');
-            $table->enum('visibility', ['general', 'private', 'limited'])->default('general')->index();
+            $table->enum(
+                'visibility',
+                array_column(Visibility::cases(), 'value')
+            )->default(Visibility::General->value)->index();
             $table->boolean('is_active')->default(true)->index();
-            $table->timestamp('published_at')->default(now())->index()->nullable();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
+            $table->timestamp('published_at')->nullable()->index();
+            $table->foreignId('user_id')->constrained('users')->nullOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->timestamps();
         });
     }

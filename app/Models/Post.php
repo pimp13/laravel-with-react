@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
  * @property int $id
  * @property int $user_id
  * @property int $category_id
- * @property int $title
+ * @property string $title
  * @property string $slug
  * @property string $content
  * @property enum-string $visibility
