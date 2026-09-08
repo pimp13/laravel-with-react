@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 /**
@@ -85,6 +86,14 @@ class Post extends Model
         return $this->belongsTo(
             User::class,
             'user_id'
+        );
+    }
+
+    public function slugHistory(): HasMany
+    {
+        return $this->hasMany(
+            PostSlugHistory::class,
+            'post_id'
         );
     }
 
