@@ -19,4 +19,10 @@ Route::prefix('panel')->group(function () {
     Route::get('/create-article', function () {
         return Inertia::render('panel/create-article');
     });
+    Route::get('/create-article-v2', function () {
+        return Inertia::render('panel/create-article-v2');
+    });
+    Route::get('/create-article-v3', function () {
+        return Inertia::render('panel/create-article-v3');
+    });
 });

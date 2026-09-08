@@ -1,5 +1,3 @@
-// create-article.tsx
-
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -125,10 +123,11 @@ const ToolbarButton = ({
     onClick={onClick}
     disabled={disabled}
     title={title}
-    className={`p-2 rounded-lg transition-colors ${isActive
-      ? "bg-indigo-100 text-indigo-700"
-      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-      } disabled:opacity-40 disabled:cursor-not-allowed`}
+    className={`p-2 rounded-lg transition-colors ${
+      isActive
+        ? "bg-indigo-100 text-indigo-700"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+    } disabled:opacity-40 disabled:cursor-not-allowed`}
   >
     {children}
   </button>
@@ -154,27 +153,6 @@ const StatusIcon = ({ status }: { status: SeoCheck["status"] }) => {
     </span>
   );
 };
-
-
-function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <div className="mb-1.5 flex items-center justify-between gap-3">
-        <label className="text-sm font-medium text-slate-700">{label}</label>
-        {hint && <span className="text-xs text-slate-400">{hint}</span>}
-      </div>
-      {children}
-    </div>
-  );
-}
 
 // ==================== Main Component ====================
 export default function CreatePostPage() {
@@ -518,8 +496,9 @@ export default function CreatePostPage() {
             <div className="hidden sm:flex items-center gap-2 text-sm">
               <span className="text-slate-500">امتیاز سئو:</span>
               <span
-                className={`font-bold ${seoScore >= 80 ? "text-emerald-600" : seoScore >= 50 ? "text-amber-600" : "text-red-600"
-                  }`}
+                className={`font-bold ${
+                  seoScore >= 80 ? "text-emerald-600" : seoScore >= 50 ? "text-amber-600" : "text-red-600"
+                }`}
               >
                 {seoScore}/100
               </span>
@@ -602,10 +581,11 @@ export default function CreatePostPage() {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex-1 py-3.5 text-sm font-medium transition ${activeTab === tab.id
-                      ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50"
-                      : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
-                      }`}
+                    className={`flex-1 py-3.5 text-sm font-medium transition ${
+                      activeTab === tab.id
+                        ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50"
+                        : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                    }`}
                   >
                     {tab.label}
                   </button>
@@ -887,41 +867,23 @@ export default function CreatePostPage() {
                 {/* Settings Tab */}
                 {activeTab === "settings" && (
                   <div className="space-y-6">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">تصویر شاخص</label>
-                        <input
-                          type="url"
-                          value={form.featured_image}
-                          onChange={(e) => handleChange("featured_image", e.target.value)}
-                          placeholder="https://example.com/image.jpg"
-                          className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/30 outline-none"
-                          dir="ltr"
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">تصویر شاخص</label>
+                      <input
+                        type="url"
+                        value={form.featured_image}
+                        onChange={(e) => handleChange("featured_image", e.target.value)}
+                        placeholder="https://example.com/image.jpg"
+                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/30 outline-none"
+                        dir="ltr"
+                      />
+                      {form.featured_image && (
+                        <img
+                          src={form.featured_image}
+                          alt="Preview"
+                          className="mt-3 w-full h-48 object-cover rounded-xl border border-slate-200"
                         />
-                        {form.featured_image && (
-                          <img
-                            src={form.featured_image}
-                            alt="Preview"
-                            className="mt-3 w-full h-48 object-cover rounded-xl border border-slate-200"
-                          />
-                        )}
-                      </div>
-                      <Field label="آپلود تصویر">
-                        <label className="flex cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50">
-                          {/* {uploadingImage
-                            ? "در حال آپلود..."
-                            : "انتخاب تصویر"} */}
-                            انتخاب تصویر
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            // onChange={
-                            //   handleFeaturedImageUpload
-                            // }
-                          />
-                        </label>
-                      </Field>
+                      )}
                     </div>
 
                     <div>
@@ -966,12 +928,14 @@ export default function CreatePostPage() {
                       <button
                         type="button"
                         onClick={() => handleMetaChange("is_pillar", !form.meta.is_pillar)}
-                        className={`relative w-11 h-6 rounded-full transition ${form.meta.is_pillar ? "bg-indigo-600" : "bg-slate-300"
-                          }`}
+                        className={`relative w-11 h-6 rounded-full transition ${
+                          form.meta.is_pillar ? "bg-indigo-600" : "bg-slate-300"
+                        }`}
                       >
                         <span
-                          className={`absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition ${form.meta.is_pillar ? "-translate-x-5" : ""
-                            }`}
+                          className={`absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition ${
+                            form.meta.is_pillar ? "-translate-x-5" : ""
+                          }`}
                         />
                       </button>
                     </div>
@@ -988,8 +952,9 @@ export default function CreatePostPage() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-slate-800">تحلیل سئو</h3>
                 <span
-                  className={`text-2xl font-bold ${seoScore >= 80 ? "text-emerald-600" : seoScore >= 50 ? "text-amber-600" : "text-red-600"
-                    }`}
+                  className={`text-2xl font-bold ${
+                    seoScore >= 80 ? "text-emerald-600" : seoScore >= 50 ? "text-amber-600" : "text-red-600"
+                  }`}
                 >
                   {seoScore}
                 </span>
@@ -997,8 +962,9 @@ export default function CreatePostPage() {
 
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-5">
                 <div
-                  className={`h-full transition-all duration-500 ${seoScore >= 80 ? "bg-emerald-500" : seoScore >= 50 ? "bg-amber-500" : "bg-red-500"
-                    }`}
+                  className={`h-full transition-all duration-500 ${
+                    seoScore >= 80 ? "bg-emerald-500" : seoScore >= 50 ? "bg-amber-500" : "bg-red-500"
+                  }`}
                   style={{ width: `${seoScore}%` }}
                 />
               </div>
@@ -1048,12 +1014,14 @@ export default function CreatePostPage() {
                 <button
                   type="button"
                   onClick={() => handleChange("is_active", !form.is_active)}
-                  className={`relative w-11 h-6 rounded-full transition ${form.is_active ? "bg-indigo-600" : "bg-slate-300"
-                    }`}
+                  className={`relative w-11 h-6 rounded-full transition ${
+                    form.is_active ? "bg-indigo-600" : "bg-slate-300"
+                  }`}
                 >
                   <span
-                    className={`absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition ${form.is_active ? "-translate-x-5" : ""
-                      }`}
+                    className={`absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition ${
+                      form.is_active ? "-translate-x-5" : ""
+                    }`}
                   />
                 </button>
               </div>
@@ -1085,16 +1053,18 @@ export default function CreatePostPage() {
                   <button
                     type="button"
                     onClick={() => setSnippetView("desktop")}
-                    className={`px-2.5 py-1 text-xs rounded-md transition ${snippetView === "desktop" ? "bg-white shadow text-slate-800" : "text-slate-500"
-                      }`}
+                    className={`px-2.5 py-1 text-xs rounded-md transition ${
+                      snippetView === "desktop" ? "bg-white shadow text-slate-800" : "text-slate-500"
+                    }`}
                   >
                     دسکتاپ
                   </button>
                   <button
                     type="button"
                     onClick={() => setSnippetView("mobile")}
-                    className={`px-2.5 py-1 text-xs rounded-md transition ${snippetView === "mobile" ? "bg-white shadow text-slate-800" : "text-slate-500"
-                      }`}
+                    className={`px-2.5 py-1 text-xs rounded-md transition ${
+                      snippetView === "mobile" ? "bg-white shadow text-slate-800" : "text-slate-500"
+                    }`}
                   >
                     موبایل
                   </button>
