@@ -14,14 +14,14 @@ use Illuminate\Support\Str;
 
 /**
  * @property int $id
- * @property int $user_id
- * @property int $category_id
+ * @property int|null $user_id
+ * @property int|null $category_id
  * @property string $title
  * @property string $slug
  * @property string $content
- * @property enum-string $visibility
+ * @property Visibility $visibility
  * @property string|null $excerpt
- * @property string $featured_image
+ * @property string|null $featured_image
  * @property Carbon|null $published_at
  * @property bool $is_active
  * @property array|null $meta
@@ -44,15 +44,15 @@ use Illuminate\Support\Str;
 class Post extends Model
 {
     protected $casts = [
-        'meta' => 'object',
+        'meta' => 'array',
         'is_active' => 'boolean',
         'visibility' => Visibility::class,
+        'published_at' => 'datetime',
     ];
 
     protected $attributes = [
-        'visibility' => 'general',
+        'visibility' => Visibility::GENERAL->value,
         'is_active' => true,
-        'published_at' => null,
     ];
 
     protected $appends = [
@@ -62,120 +62,142 @@ class Post extends Model
     protected function featuredImageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->featured_image
-                ? asset('storage' . DIRECTORY_SEPARATOR . $this->featured_image)
+            get: fn (): ?string => $this->featured_image
+                ? asset(
+                    'storage' .
+                    DIRECTORY_SEPARATOR .
+                    $this->featured_image
+                )
                 : null,
         );
     }
 
-
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(
+            Category::class,
+            'category_id'
+        );
     }
 
     public function author(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(
+            User::class,
+            'user_id'
+        );
     }
 
-    public static function generateUniqueSlug(?string $slug, string $title, ?int $ignoreId = null): string
-    {
-        $baseSlug = $slug ? Str::slug($slug) : Str::slug($title);
-        if (empty($baseSlug)) {
-            $baseSlug = Str::slug($title) ?: 'item';
+    public static function generateUniqueSlug(
+        ?string $slug,
+        string $title,
+        ?int $ignoreId = null
+    ): string {
+        $baseSlug = Str::slug($slug ?: $title);
+
+        if ($baseSlug === '') {
+            $baseSlug = 'post';
         }
 
         $uniqueSlug = $baseSlug;
         $counter = 1;
+
         while (
-            static::where('slug', $uniqueSlug)
-            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
-            ->exists()
+            static::query()
+                ->where('slug', $uniqueSlug)
+                ->when(
+                    $ignoreId !== null,
+                    fn (Builder $query) =>
+                        $query->whereKeyNot($ignoreId)
+                )
+                ->exists()
         ) {
-            $uniqueSlug = $baseSlug . '-' . $counter;
+            $uniqueSlug = "{$baseSlug}-{$counter}";
             $counter++;
         }
+
         return $uniqueSlug;
     }
 
-    /**
-     * Scope برای پست‌های منتشر شده
-     */
     #[Scope]
-    public function published(Builder $query)
+    protected function published(Builder $query): void
     {
-        return $query->where('is_active', true)
+        $query
+            ->where('is_active', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
     }
 
-    /**
-     * Scope برای پست‌های عمومی
-     */
     #[Scope]
-    public function public(Builder $query)
+    protected function public(Builder $query): void
     {
-        return $query->where('visibility', 'general');
+        $query->where(
+            'visibility',
+            Visibility::GENERAL
+        );
     }
 
-    /**
-     * Scope برای پست‌های خصوصی
-     */
     #[Scope]
-    public function private(Builder $query)
+    protected function private(Builder $query): void
     {
-        return $query->where('visibility', 'private');
+        $query->where(
+            'visibility',
+            Visibility::PRIVATE
+        );
     }
 
-    /**
-     * Scope برای پست‌های محدود
-     */
     #[Scope]
-    public function limited(Builder $query)
+    protected function limited(Builder $query): void
     {
-        return $query->where('visibility', 'limited');
+        $query->where(
+            'visibility',
+            Visibility::LIMITED
+        );
     }
 
-    /**
-     * Scope برای پست‌های یک نویسنده
-     */
     #[Scope]
-    public function byAuthor(Builder $query, int $userId)
-    {
-        return $query->where('user_id', $userId);
+    protected function byAuthor(
+        Builder $query,
+        int $userId
+    ): void {
+        $query->where('user_id', $userId);
     }
 
-    /**
-     * Scope برای پست‌های یک دسته‌بندی
-     */
     #[Scope]
-    public function byCategory(Builder $query, int $categoryId)
-    {
-        return $query->where('category_id', $categoryId);
+    protected function byCategory(
+        Builder $query,
+        int $categoryId
+    ): void {
+        $query->where('category_id', $categoryId);
     }
 
-    /**
-     * Scope برای جستجو در عنوان و محتوا
-     */
     #[Scope]
-    public function search(Builder $query, string $searchTerm)
-    {
-        return $query->where(function ($q) use ($searchTerm) {
-            $q->where('title', 'LIKE', "%{$searchTerm}%")
-                ->orWhere('content', 'LIKE', "%{$searchTerm}%")
-                ->orWhere('excerpt', 'LIKE', "%{$searchTerm}%");
+    protected function search(
+        Builder $query,
+        string $searchTerm
+    ): void {
+        $searchTerm = trim($searchTerm);
+
+        if ($searchTerm === '') {
+            return;
+        }
+
+        $query->where(function (Builder $query) use ($searchTerm) {
+            $query
+                ->where('title', 'ILIKE', "%{$searchTerm}%")
+                ->orWhere('content', 'ILIKE', "%{$searchTerm}%")
+                ->orWhere('excerpt', 'ILIKE', "%{$searchTerm}%");
         });
     }
 
-    /**
-     * Scope برای پست‌های اخیر
-     */
     #[Scope]
-    public function recent(Builder $query, int $limit = 10)
-    {
-        return $query->published()
-            ->orderBy('published_at', 'desc')
+    protected function recent(
+        Builder $query,
+        int $limit = 10
+    ): void {
+        $query
+            ->published()
+            ->latest('published_at')
             ->limit($limit);
     }
 }
