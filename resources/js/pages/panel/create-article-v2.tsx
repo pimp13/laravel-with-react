@@ -2677,6 +2677,24 @@ export default function CreatePostPage() {
                   </select>
                 </Field>
 
+                <Field label="دسته بندی">
+                  <select
+                    value={form.visibility}
+                    onChange={(event) =>
+                      setField(
+                        "category_id",
+                        event.target
+                          .value as PostFormData["category_id"],
+                      )
+                    }
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                  >
+                    <option value="1">دسته بندی تستی اول</option>
+                    <option value="2">دوم</option>
+                    <option value="3">سوم</option>
+                  </select>
+                </Field>
+
                 <Field label="تاریخ انتشار">
                   <input
                     type="datetime-local"
