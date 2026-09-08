@@ -51,7 +51,7 @@ class Post extends Model
     ];
 
     protected $attributes = [
-        'visibility' => Visibility::GENERAL->value,
+        'visibility' => Visibility::General->value,
         'is_active' => true,
     ];
 
@@ -62,11 +62,11 @@ class Post extends Model
     protected function featuredImageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn (): ?string => $this->featured_image
+            get: fn(): ?string => $this->featured_image
                 ? asset(
                     'storage' .
-                    DIRECTORY_SEPARATOR .
-                    $this->featured_image
+                        DIRECTORY_SEPARATOR .
+                        $this->featured_image
                 )
                 : null,
         );
@@ -104,13 +104,13 @@ class Post extends Model
 
         while (
             static::query()
-                ->where('slug', $uniqueSlug)
-                ->when(
-                    $ignoreId !== null,
-                    fn (Builder $query) =>
-                        $query->whereKeyNot($ignoreId)
-                )
-                ->exists()
+            ->where('slug', $uniqueSlug)
+            ->when(
+                $ignoreId !== null,
+                fn(Builder $query) =>
+                $query->whereKeyNot($ignoreId)
+            )
+            ->exists()
         ) {
             $uniqueSlug = "{$baseSlug}-{$counter}";
             $counter++;
@@ -133,7 +133,7 @@ class Post extends Model
     {
         $query->where(
             'visibility',
-            Visibility::GENERAL
+            Visibility::General
         );
     }
 
@@ -142,7 +142,7 @@ class Post extends Model
     {
         $query->where(
             'visibility',
-            Visibility::PRIVATE
+            Visibility::Private
         );
     }
 
@@ -151,7 +151,7 @@ class Post extends Model
     {
         $query->where(
             'visibility',
-            Visibility::LIMITED
+            Visibility::Limited
         );
     }
 
