@@ -5,10 +5,18 @@ use Inertia\Inertia;
 
 Route::inertia('/', 'welcome')->name('home');
 
-Route::get('/panel', function () {
-    return Inertia::render('panel');
-});
+
 
 Route::get('/blog', function () {
     return Inertia::render('blog');
+});
+
+Route::prefix('panel')->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('panel');
+    });
+
+    Route::get('/create-article', function () {
+        return Inertia::render('panel/create-article');
+    });
 });
