@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Post;
 
+use App\Enums\Visibility;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -9,7 +10,9 @@ class CreatePostRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() !== null;
+        // dd($this->user());
+        // return $this->user() !== null;
+        return true;
     }
 
     public function rules(): array
@@ -58,11 +61,7 @@ class CreatePostRequest extends FormRequest
 
             'visibility' => [
                 'required',
-                Rule::in([
-                    'public',
-                    'private',
-                    'password',
-                ]),
+                Rule::in(Visibility::cases()),
             ],
 
             'published_at' => [

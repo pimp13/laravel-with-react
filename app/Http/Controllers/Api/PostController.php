@@ -6,14 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\CreatePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
 use App\Models\Post;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
+use App\Services\PostService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use OpenApi\Attributes as OA;
 
 class PostController extends Controller
 {
+    public function __construct(
+        private readonly PostService $postService,
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -36,6 +39,8 @@ class PostController extends Controller
         ]);
     }
 
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -51,45 +56,13 @@ class PostController extends Controller
     )]
     public function store(CreatePostRequest $request)
     {
-        $bodyData = [
-            'title' => $request->title,
-            'slug' => Post::generateUniqueSlug(
-                $request->slug,
-                $request->title
-            ),
-            'content' => $request->input('content'),
-            'is_active' => $request->boolean('is_active'),
-            'user_id' => $request->user_id,
-            'category_id' => $request->category_id,
-            'visibility' => $request->visibility,
-            'excerpt' => $request->excerpt,
-            'published_at' => $request->published_at,
-        ];
-
-        $bodyData['meta'] = array_filter([
-            'tag' => $request->tag,
-            ...($request->meta ?? []),
-        ]) ?: null;
-        // $bodyData['meta'] = $request->meta ?: (
-        //     $request->tag
-        //     ? ['tag' => $request->tag]
-        //     : null
-        // );
-
-        if ($request->hasFile('featured_image')) {
-            $bodyData['featured_image'] = $request
-                ->file('featured_image')
-                ->store('images', 'public');
-        } else {
-            $bodyData['featured_image'] = 'https://placehold.co/600x400';
-        }
-
-        $post = Post::create($bodyData);
+        $data = $request->validated();
+        dd($data);
 
         return response()->json([
             'success' => true,
             'message' => 'a new post created successfully',
-            'data' => $post
+            // 'data' => $post
         ]);
     }
 
