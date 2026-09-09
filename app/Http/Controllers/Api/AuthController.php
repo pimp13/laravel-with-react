@@ -22,7 +22,7 @@ class AuthController extends Controller
             name: $request->input('name'),
         );
         $cookie = cookie(
-            name: '_token',
+            name: config('auth.cookie_name'),
             value: $result['token'],
             minutes: config('auth.cookie_ttl'),
             path: '/',
