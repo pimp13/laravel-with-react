@@ -15,9 +15,14 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('posts', PostController::class);
 
-    Route::post('/auth', [AuthController::class, 'authenticate']);
 
-    Route::middleware(JwtCookieMiddleware::class)->group(function () {
-        Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::prefix('auth')->group(function () {
+        Route::post('/', [AuthController::class, 'authenticate'])->name('authenticate');
+        Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+        Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+
+        Route::middleware(JwtCookieMiddleware::class)->group(function () {
+            Route::get('/auth/me', [AuthController::class, 'me'])->name('auth.me');
+        });
     });
 });
