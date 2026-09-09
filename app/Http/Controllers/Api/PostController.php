@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\CreatePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
@@ -33,12 +34,8 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::with(['category', 'author'])->get();
-        return response()->json([
-            'success' => true,
-            'data' => $posts
-        ]);
+        return ApiResponse::success(data: $posts);
     }
-
 
 
     /**

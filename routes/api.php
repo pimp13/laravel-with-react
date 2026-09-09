@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 
-Route::prefix('v1')->group(function () {
+Route::middleware(['api', 'resolve'])->prefix('v1')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::patch('/users/{user}/status', [UserController::class, 'changeStatus']);
 
@@ -15,22 +15,16 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('posts', PostController::class);
 
 
-    Route::middleware('api')->prefix('auth')->group(function () {
+    Route::prefix('auth')->group(function () {
         Route::post('/', [AuthController::class, 'authenticate'])->name('authenticate');
 
         Route::middleware('guest')->group(function () {
             Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
-        });
-
-        Route::middleware('guest')->group(function () {
             Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
         });
 
         Route::middleware('jwt')->group(function () {
             Route::get('/me', [AuthController::class, 'me'])->name('auth.me');
-        });
-
-        Route::middleware(['jwt'])->group(function () {
             Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
         });
     });

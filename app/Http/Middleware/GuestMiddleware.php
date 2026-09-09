@@ -13,23 +13,12 @@ class GuestMiddleware
         Request $request,
         Closure $next
     ): Response {
-        try {
-            $token = $request->cookie(config('auth.cookie_name'));
-
-            if (!$token) {
-                return $next($request);
-            }
-
-            JWTAuth::setToken($token);
-
-            if (JWTAuth::check()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You are already authenticated.',
-                ], 403);
-            }
-        } catch (\Throwable $e) {
-            return $next($request);
+        if ($request->user()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Authenticated users are not allowed.',
+                'data' => null,
+            ], 403);
         }
 
         return $next($request);

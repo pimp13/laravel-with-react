@@ -15,30 +15,15 @@ class JwtCookieMiddleware
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
-    {
-        $token = $request->cookie(config('auth.cookie_name'));
-        if (!$token) {
+    public function handle(
+        Request $request,
+        Closure $next
+    ): Response {
+        if (!$request->user()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthenticated.'
-            ], 401);
-        }
-
-        try {
-            $user = JWTAuth::setToken($token)->authenticate();
-            if (!$user) {
-                return response()->json([
-                    'message' => 'Unauthenticated.',
-                ], 401);
-            }
-
-            $request->setUserResolver(
-                fn() => $user
-            );
-        } catch (JWTException $e) {
-            return response()->json([
                 'message' => 'Unauthenticated.',
+                'data' => null,
             ], 401);
         }
 
