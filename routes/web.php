@@ -26,3 +26,7 @@ Route::prefix('panel')->group(function () {
         return Inertia::render('panel/create-article-v3');
     });
 });
+
+Route::get('/auth', function () {
+    return Inertia::render('auth');
+});
