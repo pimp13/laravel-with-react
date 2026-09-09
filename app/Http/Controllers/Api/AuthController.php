@@ -55,10 +55,14 @@ class AuthController extends Controller
     }
 
 
-    public function register(): JsonResponse
+    public function register(AuthRequest $request): JsonResponse
     {
+        $bodyData = $request->validated();
+        $result = $this->authService->register($bodyData);
         return response()->json([
             'success' => true,
+            'message' => 'register user is successfully!',
+            'data' => $result,
         ]);
     }
 
