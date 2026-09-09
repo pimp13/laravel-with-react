@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Middleware\GuestMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\JwtCookieMiddleware;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -21,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
             HandleCors::class,
+        ]);
+        $middleware->alias([
+            'jwt' => JwtCookieMiddleware::class,
+            'guest' => GuestMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
