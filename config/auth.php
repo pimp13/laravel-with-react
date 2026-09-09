@@ -4,6 +4,8 @@ use App\Models\User;
 
 return [
 
+    'cookie_ttl' => (int) env('AUTH_COOKIE_TTL', 60),
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
