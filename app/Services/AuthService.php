@@ -42,10 +42,10 @@ class AuthService
 
     public function register(array $bodyData): User
     {
-        $user = User::where('email', $bodyData['email'])->first();
+        $user = User::where('email', $bodyData['email'])->first(['id']);
         if ($user) {
             throw ValidationException::withMessages([
-                'email' => 'The email has already been registered.',
+                'email' => 'کلمه عبور یا آدرس ایمیل اشتباه هست',
             ]);
         }
 
@@ -56,5 +56,27 @@ class AuthService
         ]);
 
         return $user;
+    }
+
+    public function login(array $bodyData)
+    {
+        $user = User::where('email', $bodyData['email'])->first(['id', 'email', 'password']);
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => 'آدرس ایمیل یا کلمه عبور اشتباه هست',
+            ]);
+        }
+
+        if (!Hash::check($bodyData['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => 'کلمه عبور یا آدرس ایمیل اشتباه هست',
+            ]);
+        }
+
+        $token = JWTAuth::fromUser($user);
+        return [
+            'user' => $user,
+            'token' => $token,
+        ];
     }
 }

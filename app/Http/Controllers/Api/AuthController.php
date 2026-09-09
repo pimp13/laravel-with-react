@@ -66,10 +66,26 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login(): JsonResponse
+    public function login(AuthRequest $request): JsonResponse
     {
+        $result = $this->authService->login($request->validated());
+        $cookie = cookie(
+            name: config('auth.cookie_name'),
+            value: $result['token'],
+            minutes: config('auth.cookie_ttl'),
+            path: '/',
+            domain: null,
+            secure: app()->isProduction(),
+            httpOnly: true,
+            raw: false,
+            sameSite: 'lax',
+        );
         return response()->json([
             'success' => true,
-        ]);
+            'message' => 'ورود به حساب کاربری موفقیت آمیز بود',
+            'data' => [
+                'user' => $result['user'],
+            ],
+        ])->withCookie($cookie);
     }
 }
