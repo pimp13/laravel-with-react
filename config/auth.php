@@ -6,6 +6,8 @@ return [
 
     'cookie_ttl' => (int) env('AUTH_COOKIE_TTL', 60),
 
+    'cookie_name' => (string) env('AUTH_COOKIE_NAME', '__token'),
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
