@@ -14,7 +14,7 @@ class GuestMiddleware
         Closure $next
     ): Response {
         try {
-            $token = $request->cookie('_token');
+            $token = $request->cookie(config('auth.cookie_name'));
 
             if (!$token) {
                 return $next($request);

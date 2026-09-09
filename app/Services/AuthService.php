@@ -19,7 +19,7 @@ class AuthService
         string $password,
         ?string $name = null
     ): array {
-        $user = User::where('email', $email)->first();
+        $user = User::where('email', $email)->first(['id', 'email', 'password']);
         if (!$user) {
             $user = User::create([
                 'name' => $name ?? 'Anonymous',

@@ -7,6 +7,8 @@ use App\Http\Requests\AuthRequest;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -87,5 +89,25 @@ class AuthController extends Controller
                 'user' => $result['user'],
             ],
         ])->withCookie($cookie);
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        $token = $request->cookie(config('auth.cookie_name'));
+
+        if (!$token) {
+            return response()->json([
+                'success' => true,
+                'message' => 'خروج از حساب کاربری موفقیت آمیز بود'
+            ])->withoutCookie(config('auth.cookie_name'));
+        }
+        try {
+            JWTAuth::setToken($token)->invalidate();
+        } finally {
+            return response()->json([
+                'success' => true,
+                'message' => 'خروج از حساب کاربری موفقیت آمیز بود'
+            ])->withoutCookie(config('auth.cookie_name'));
+        }
     }
 }

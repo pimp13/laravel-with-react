@@ -29,5 +29,9 @@ Route::prefix('v1')->group(function () {
         Route::middleware('jwt')->group(function () {
             Route::get('/me', [AuthController::class, 'me'])->name('auth.me');
         });
+
+        Route::middleware(['jwt'])->group(function () {
+            Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+        });
     });
 });
