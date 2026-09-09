@@ -41,4 +41,15 @@ class AuthController extends Controller
             ]
         ])->withCookie($cookie);
     }
+
+    public function me(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'data' => [
+                'user' => $user,
+            ],
+        ]);
+    }
 }

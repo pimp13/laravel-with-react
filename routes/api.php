@@ -5,8 +5,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
-
-
+use App\Http\Middleware\JwtCookieMiddleware;
 
 Route::prefix('v1')->group(function () {
     Route::apiResource('users', UserController::class);
@@ -17,4 +16,8 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('posts', PostController::class);
 
     Route::post('/auth', [AuthController::class, 'authenticate']);
+
+    Route::middleware(JwtCookieMiddleware::class)->group(function () {
+        Route::get('/auth/me', [AuthController::class, 'me']);
+    });
 });
