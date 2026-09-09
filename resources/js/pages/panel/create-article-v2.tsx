@@ -106,7 +106,7 @@ interface PostFormData {
   excerpt: string;
   featured_image: string;
   category_id: number | "";
-  visibility: "public" | "private" | "draft";
+  visibility: "general" | "private" | 'limited' | "draft";
   published_at: string;
   is_active: boolean;
   meta: SeoMeta;
@@ -1069,7 +1069,7 @@ export default function CreatePostPage() {
     }
 
     if (
-      form.visibility === "public" &&
+      form.visibility === "general" &&
       form.meta.robots.index === "index" &&
       seoScore < 50
     ) {
@@ -1106,6 +1106,14 @@ export default function CreatePostPage() {
       };
 
       console.log("Post draft:", payload);
+
+      const res = await fetch('/api/v1/posts', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      console.log("Backend response data:", data);
 
       window.alert(
         "مقاله فعلاً به‌صورت محلی آماده شد و در کنسول ثبت شد.",
@@ -2672,14 +2680,15 @@ export default function CreatePostPage() {
                     className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
                   >
                     <option value="draft">پیش‌نویس</option>
-                    <option value="public">عمومی</option>
+                    <option value="general">عمومی</option>
                     <option value="private">خصوصی</option>
+                    <option value="limited">محدود</option>
                   </select>
                 </Field>
 
                 <Field label="دسته بندی">
                   <select
-                    value={form.visibility}
+                    value={form.category_id}
                     onChange={(event) =>
                       setField(
                         "category_id",

@@ -7,6 +7,7 @@ enum Visibility: string
     case General  = 'general';
     case Private  = 'private';
     case Limited  = 'limited';
+    case Draft = 'draft';
 
     public function label(): string
     {
@@ -14,6 +15,7 @@ enum Visibility: string
             self::General  => 'عمومی',
             self::Private  => 'خصوصی',
             self::Limited  => 'محدود',
+            self::Draft => 'پیش‌نویس'
         };
     }
 }
