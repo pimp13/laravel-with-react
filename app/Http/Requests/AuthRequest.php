@@ -15,6 +15,49 @@ class AuthRequest extends FormRequest
         return true;
     }
 
+
+    private function registerRules(): array
+    {
+        return [
+            'name' => [
+                'required',
+                'string',
+                'min:2',
+                'max:255',
+            ],
+
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                'unique:users,email',
+            ],
+
+            'password' => [
+                'required',
+                'string',
+                'min:6',
+                'confirmed',
+            ],
+        ];
+    }
+
+    private function loginRules(): array
+    {
+        return [
+            'email' => [
+                'required',
+                'email',
+            ],
+
+            'password' => [
+                'required',
+                'string',
+                'min:6'
+            ],
+        ];
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,6 +65,14 @@ class AuthRequest extends FormRequest
      */
     public function rules(): array
     {
+        if ($this->routeIs('auth.register')) {
+            return $this->registerRules();
+        }
+
+        if ($this->routeIs('auth.login')) {
+            return $this->loginRules();
+        }
+
         return [
             'name' => [
                 'nullable',
