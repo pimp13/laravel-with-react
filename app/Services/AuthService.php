@@ -39,4 +39,22 @@ class AuthService
             'token' => $token,
         ];
     }
+
+    public function register(array $bodyData): User
+    {
+        $user = User::where('email', $bodyData['email'])->first();
+        if ($user) {
+            throw ValidationException::withMessages([
+                'email' => 'The email has already been registered.',
+            ]);
+        }
+
+        $user = User::create([
+            'name' => $bodyData['name'],
+            'email' => $bodyData['email'],
+            'password' => Hash::make($bodyData['password']),
+        ]);
+
+        return $user;
+    }
 }
