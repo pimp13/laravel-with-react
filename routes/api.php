@@ -18,11 +18,17 @@ Route::prefix('v1')->group(function () {
 
     Route::prefix('auth')->group(function () {
         Route::post('/', [AuthController::class, 'authenticate'])->name('authenticate');
-        Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
-        Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
-        Route::middleware(JwtCookieMiddleware::class)->group(function () {
-            Route::get('/auth/me', [AuthController::class, 'me'])->name('auth.me');
+        Route::middleware('guest')->group(function () {
+            Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+        });
+
+        Route::middleware('jwt')->group(function () {
+            Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+        });
+
+        Route::middleware('jwt')->group(function () {
+            Route::get('/me', [AuthController::class, 'me'])->name('auth.me');
         });
     });
 });
