@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRequest;
 use App\Services\AuthService;
@@ -33,26 +34,19 @@ class AuthController extends Controller
             raw: false,
             sameSite: 'lax',
         );
-        return response()->json([
-            'success' => true,
-            'message' => 'authenticate is successfully!',
-            'data' => [
+        return ApiResponse::success(
+            data: [
                 'user' => $result['user'],
                 '__token' => $result['token'],
-            ]
-        ])->withCookie($cookie);
+            ],
+            message: 'authenticate is successfully!'
+        )->withCookie($cookie);
     }
 
     public function me(Request $request): JsonResponse
     {
         $user = $request->user();
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'user' => $user,
-            ],
-        ]);
+        return ApiResponse::success(data: ['user' => $user]);
     }
 
 
@@ -60,11 +54,10 @@ class AuthController extends Controller
     {
         $bodyData = $request->validated();
         $result = $this->authService->register($bodyData);
-        return response()->json([
-            'success' => true,
-            'message' => 'register user is successfully!',
-            'data' => $result,
-        ]);
+        return ApiResponse::success(
+            data: $result,
+            message: 'register user is successfully!',
+        );
     }
 
     public function login(AuthRequest $request): JsonResponse
@@ -81,13 +74,12 @@ class AuthController extends Controller
             raw: false,
             sameSite: 'lax',
         );
-        return response()->json([
-            'success' => true,
-            'message' => 'ورود به حساب کاربری موفقیت آمیز بود',
-            'data' => [
+        return ApiResponse::success(
+            data: [
                 'user' => $result['user'],
             ],
-        ])->withCookie($cookie);
+            message: 'ورود به حساب کاربری موفقیت آمیز بود'
+        )->withCookie($cookie);
     }
 
     public function logout(Request $request): JsonResponse
@@ -95,18 +87,16 @@ class AuthController extends Controller
         $token = $request->cookie(config('auth.cookie_name'));
 
         if (!$token) {
-            return response()->json([
-                'success' => true,
-                'message' => 'خروج از حساب کاربری موفقیت آمیز بود'
-            ])->withoutCookie(config('auth.cookie_name'));
+            return ApiResponse::success(
+                message: 'خروج از حساب کاربری موفقیت آمیز بود'
+            )->withoutCookie(config('auth.cookie_name'));
         }
         try {
             JWTAuth::setToken($token)->invalidate();
         } finally {
-            return response()->json([
-                'success' => true,
-                'message' => 'خروج از حساب کاربری موفقیت آمیز بود'
-            ])->withoutCookie(config('auth.cookie_name'));
+            return ApiResponse::success(
+                message: 'خروج از حساب کاربری موفقیت آمیز بود'
+            )->withoutCookie(config('auth.cookie_name'));
         }
     }
 }
