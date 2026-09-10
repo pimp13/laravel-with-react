@@ -134,7 +134,7 @@ export default function Auth() {
       </div>
 
       <section className="relative flex min-h-screen items-center justify-center px-4 py-10 sm:px-6">
-        <div className="w-full max-w-[460px]">
+        <div className="w-full max-w-115">
           {/* Brand */}
           <div className="mb-8 text-center">
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 shadow-xl shadow-slate-950/10">
@@ -159,11 +159,12 @@ export default function Auth() {
               <button
                 type="button"
                 onClick={() => switchMode("login")}
-                className={`rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+                className={cn(
+                  "rounded-lg px-4 py-2.5 text-sm font-medium transition-all cursor-pointer",
                   isLogin
                     ? "bg-white text-slate-950 shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
-                }`}
+                    : "text-slate-500 hover:text-slate-700",
+                )}
               >
                 ورود
               </button>
@@ -171,11 +172,12 @@ export default function Auth() {
               <button
                 type="button"
                 onClick={() => switchMode("register")}
-                className={`rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+                className={cn(
+                  "rounded-lg px-4 py-2.5 text-sm font-medium transition-all cursor-pointer",
                   !isLogin
                     ? "bg-white text-slate-950 shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
-                }`}
+                    : "text-slate-500 hover:text-slate-700",
+                )}
               >
                 ثبت نام
               </button>
@@ -278,7 +280,7 @@ export default function Auth() {
                   {isLogin && (
                     <button
                       type="button"
-                      className="text-xs font-medium text-indigo-600 transition hover:text-indigo-700 hover:underline"
+                      className="text-xs font-medium text-indigo-600 transition hover:text-indigo-700 hover:underline cursor-pointer"
                     >
                       رمز عبور را فراموش کرده‌اید؟
                     </button>
