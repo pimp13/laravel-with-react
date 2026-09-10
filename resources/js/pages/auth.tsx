@@ -13,6 +13,7 @@ Danger           Red
 
 import { FormEvent, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, LockKeyhole, Mail, User } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type AuthMode = "login" | "register";
 
@@ -206,11 +207,17 @@ export default function Auth() {
                       }
                       placeholder="نام خود را وارد کنید"
                       autoComplete="name"
-                      className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pr-11 pl-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100"
+                      className={cn(
+                        "h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pr-11 pl-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100",
+                        errors &&
+                          errors.errors &&
+                          errors.errors.name &&
+                          "border-rose-500",
+                      )}
                     />
                   </div>
                   {errors && errors.errors && errors.errors.name && (
-                    <p className="text-sm text-rose-500 mt-1">
+                    <p className="text-xs text-rose-500 mt-1">
                       {errors.errors.name}
                     </p>
                   )}
@@ -242,11 +249,17 @@ export default function Auth() {
                     placeholder="example@email.com"
                     autoComplete="email"
                     dir="ltr"
-                    className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pr-11 pl-4 text-left text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100"
+                    className={cn(
+                      "h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pr-11 pl-4 text-left text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100",
+                      errors &&
+                        errors.errors &&
+                        errors.errors.email &&
+                        "border-rose-500",
+                    )}
                   />
                 </div>
                 {errors && errors.errors && errors.errors.email && (
-                  <p className="text-sm text-rose-500 mt-1">
+                  <p className="text-xs text-rose-500 mt-1">
                     {errors.errors.email}
                   </p>
                 )}
@@ -288,7 +301,13 @@ export default function Auth() {
                     placeholder="رمز عبور خود را وارد کنید"
                     autoComplete={isLogin ? "current-password" : "new-password"}
                     dir="ltr"
-                    className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-11 text-left text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100"
+                    className={cn(
+                      "h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-11 text-left text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100",
+                      errors &&
+                        errors.errors &&
+                        errors.errors.password &&
+                        "border-rose-500",
+                    )}
                   />
 
                   <button
@@ -303,7 +322,7 @@ export default function Auth() {
                   </button>
                 </div>
                 {errors && errors.errors && errors.errors.password && (
-                  <p className="text-sm text-rose-500 mt-1">
+                  <p className="text-xs text-rose-500 mt-1">
                     {errors.errors.password}
                   </p>
                 )}
