@@ -14,6 +14,8 @@ Danger           Red
 import { FormEvent, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, LockKeyhole, Mail, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ToastProvider, useToast } from "@/components/ui/Toastalert";
+import AppLayout from "@/layouts/AppLayout";
 
 type AuthMode = "login" | "register";
 
@@ -28,12 +30,14 @@ interface TErrorsRegister {
 }
 
 export default function Auth() {
+  const toast = useToast();
+
   const [mode, setMode] = useState<AuthMode>("login");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [errors, setErrors] = useState<TErrorsRegister>();
+  const [errors, setErrors] = useState<TErrorsRegister | null>();
 
   const [form, setForm] = useState({
     name: "",
@@ -69,11 +73,7 @@ export default function Auth() {
         //     password: form.password,
         // });
 
-        console.log("Login", {
-          email: form.email,
-          password: form.password,
-          remember: form.remember,
-        });
+        console.log("Login", { form });
       } else {
         try {
           const resp = await fetch("/api/v1/auth/register", {
@@ -87,17 +87,17 @@ export default function Auth() {
             }),
           });
           const data = await resp.json();
-          console.log("data from backend => ", data);
+
           if (data?.errors) {
+            toast.error(data?.message || "خطا در اعتبارسنجی...");
             setErrors(data);
+            return;
           }
 
-          console.log("Register", {
-            name: form.name,
-            email: form.email,
-            password: form.password,
-            password_confirmation: form.password_confirmation,
-          });
+          toast.success(data?.message || "عملیات موفقیت آمیز بود");
+          setMode("login");
+          setErrors(null);
+          setForm((prev) => ({ ...prev }));
         } catch (err: any) {
           console.log("server error := ", err.message);
         }
@@ -121,7 +121,7 @@ export default function Auth() {
   };
 
   return (
-    <main
+    <section
       dir="rtl"
       className="relative min-h-screen overflow-hidden bg-[#f8fafc]"
     >
@@ -496,6 +496,8 @@ export default function Auth() {
           </p>
         </div>
       </section>
-    </main>
+    </section>
   );
 }
+
+Auth.layout = (page: React.ReactNode) => <AppLayout>{page}</AppLayout>;
