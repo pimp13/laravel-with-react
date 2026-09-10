@@ -16,11 +16,23 @@ import { ArrowLeft, Eye, EyeOff, LockKeyhole, Mail, User } from "lucide-react";
 
 type AuthMode = "login" | "register";
 
+interface TErrorsRegister {
+  errors: {
+    password: string[];
+    email: string[];
+    name: string[];
+    password_confirmation: string[];
+  };
+  message: string;
+}
+
 export default function Auth() {
   const [mode, setMode] = useState<AuthMode>("login");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [errors, setErrors] = useState<TErrorsRegister>();
 
   const [form, setForm] = useState({
     name: "",
@@ -62,22 +74,32 @@ export default function Auth() {
           remember: form.remember,
         });
       } else {
-        // TODO:
-        // اتصال به API Register
-        //
-        // await axios.post("/api/auth/register", {
-        //     name: form.name,
-        //     email: form.email,
-        //     password: form.password,
-        //     password_confirmation: form.password_confirmation,
-        // });
+        try {
+          const resp = await fetch("/api/v1/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: form.name,
+              email: form.email,
+              password: form.password,
+              password_confirmation: form.password_confirmation,
+            }),
+          });
+          const data = await resp.json();
+          console.log("data from backend => ", data);
+          if (data?.errors) {
+            setErrors(data);
+          }
 
-        console.log("Register", {
-          name: form.name,
-          email: form.email,
-          password: form.password,
-          password_confirmation: form.password_confirmation,
-        });
+          console.log("Register", {
+            name: form.name,
+            email: form.email,
+            password: form.password,
+            password_confirmation: form.password_confirmation,
+          });
+        } catch (err: any) {
+          console.log("server error := ", err.message);
+        }
       }
     } finally {
       setLoading(false);
@@ -187,6 +209,11 @@ export default function Auth() {
                       className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pr-11 pl-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100"
                     />
                   </div>
+                  {errors && errors.errors && errors.errors.name && (
+                    <p className="text-sm text-rose-500 mt-1">
+                      {errors.errors.name}
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -218,6 +245,11 @@ export default function Auth() {
                     className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pr-11 pl-4 text-left text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-4 focus:ring-slate-100"
                   />
                 </div>
+                {errors && errors.errors && errors.errors.email && (
+                  <p className="text-sm text-rose-500 mt-1">
+                    {errors.errors.email}
+                  </p>
+                )}
               </div>
 
               {/* Password */}
@@ -233,7 +265,7 @@ export default function Auth() {
                   {isLogin && (
                     <button
                       type="button"
-                      className="text-xs font-medium text-indigo-600 transition hover:text-indigo-700"
+                      className="text-xs font-medium text-indigo-600 transition hover:text-indigo-700 hover:underline"
                     >
                       رمز عبور را فراموش کرده‌اید؟
                     </button>
@@ -270,6 +302,11 @@ export default function Auth() {
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+                {errors && errors.errors && errors.errors.password && (
+                  <p className="text-sm text-rose-500 mt-1">
+                    {errors.errors.password}
+                  </p>
+                )}
               </div>
 
               {/* Confirm password */}
@@ -320,6 +357,13 @@ export default function Auth() {
                       )}
                     </button>
                   </div>
+                  {errors &&
+                    errors.errors &&
+                    errors.errors.password_confirmation && (
+                      <p className="text-sm text-rose-500 mt-1">
+                        {errors.errors.password_confirmation}
+                      </p>
+                    )}
                 </div>
               )}
 
