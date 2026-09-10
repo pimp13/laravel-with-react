@@ -56,7 +56,7 @@ class AuthController extends Controller
         $result = $this->authService->register($bodyData);
         return ApiResponse::success(
             data: $result,
-            message: 'register user is successfully!',
+            message: 'ثبت نام شما موفقیت آمیز بود',
         );
     }
 
