@@ -1,5 +1,6 @@
 import { useToast } from "@/components/ui/Toastalert";
 import AppLayout from "@/layouts/AppLayout";
+import PanelLayout from "@/layouts/PanelLayout";
 import { Head, Link } from "@inertiajs/react";
 import { XIcon } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
@@ -443,495 +444,499 @@ export default function PostsListPage() {
         <meta name="description" content="Your page description" />
       </Head>
 
-      <div dir="rtl" className="min-h-screen bg-slate-100 text-slate-900">
-        {/* Header */}
-        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-lg font-bold">مدیریت مقالات</h1>
-                <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
-                  CMS
-                </span>
-              </div>
-              <p className="mt-0.5 text-xs text-slate-500">
-                پنل مدیریت محتوا • مشابه وردپرس
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Link
-                href="/panel/posts/create"
-                className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
-              >
-                <span className="text-lg leading-none">+</span>
-                مقاله جدید
-              </Link>
-            </div>
-          </div>
-        </header>
-
-        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          {/* Stats */}
-          <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            <StatCard
-              label="کل مقالات"
-              value={stats.total}
-              color="text-slate-800"
-            />
-            <StatCard
-              label="منتشر شده"
-              value={stats.published}
-              color="text-emerald-600"
-            />
-            <StatCard
-              label="پیش‌نویس"
-              value={stats.drafts}
-              color="text-blue-600"
-            />
-            <StatCard
-              label="خصوصی"
-              value={stats.private}
-              color="text-slate-600"
-            />
-            <StatCard
-              label="محدود"
-              value={stats.limited}
-              color="text-amber-600"
-            />
-          </div>
-
-          {/* Filters & Toolbar */}
-          <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              {/* Search */}
-              <div className="relative flex-1 max-w-md">
-                <input
-                  type="search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="جستجو در عنوان، نامک، خلاصه یا نویسنده..."
-                  className="w-full rounded-xl border border-slate-200 py-2.5 pr-10 pl-4 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
-                />
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                  🔍
-                </span>
+      <PanelLayout title="مقالات">
+        <div dir="rtl" className="min-h-screen bg-slate-100 text-slate-900">
+          {/* Header */}
+          <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+              <div>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-lg font-bold">مدیریت مقالات</h1>
+                  <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
+                    CMS
+                  </span>
+                </div>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  پنل مدیریت محتوا • مشابه وردپرس
+                </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                {/* Status filter */}
-                <select
-                  value={statusFilter}
-                  onChange={(e) =>
-                    setStatusFilter(e.target.value as Visibility | "all")
-                  }
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/panel/posts/create"
+                  className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
                 >
-                  <option value="all">همه وضعیت‌ها</option>
-                  <option value="general">عمومی</option>
-                  <option value="draft">پیش‌نویس</option>
-                  <option value="private">خصوصی</option>
-                  <option value="limited">محدود</option>
-                </select>
+                  <span className="text-lg leading-none">+</span>
+                  مقاله جدید
+                </Link>
+              </div>
+            </div>
+          </header>
 
-                {/* Category filter */}
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(Number(e.target.value))}
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.title}
-                    </option>
-                  ))}
-                </select>
+          <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            {/* Stats */}
+            <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+              <StatCard
+                label="کل مقالات"
+                value={stats.total}
+                color="text-slate-800"
+              />
+              <StatCard
+                label="منتشر شده"
+                value={stats.published}
+                color="text-emerald-600"
+              />
+              <StatCard
+                label="پیش‌نویس"
+                value={stats.drafts}
+                color="text-blue-600"
+              />
+              <StatCard
+                label="خصوصی"
+                value={stats.private}
+                color="text-slate-600"
+              />
+              <StatCard
+                label="محدود"
+                value={stats.limited}
+                color="text-amber-600"
+              />
+            </div>
 
-                {/* Active only */}
-                <label className="flex items-center gap-2 text-sm text-slate-600">
+            {/* Filters & Toolbar */}
+            <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                {/* Search */}
+                <div className="relative flex-1 max-w-md">
                   <input
-                    type="checkbox"
-                    checked={activeOnly}
-                    onChange={(e) => setActiveOnly(e.target.checked)}
-                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    type="search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="جستجو در عنوان، نامک، خلاصه یا نویسنده..."
+                    className="w-full rounded-xl border border-slate-200 py-2.5 pr-10 pl-4 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
                   />
-                  فقط فعال‌ها
-                </label>
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    🔍
+                  </span>
+                </div>
 
-                {/* View mode */}
-                <div className="flex overflow-hidden rounded-lg border border-slate-200">
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("table")}
-                    className={`px-3 py-2 text-sm ${
-                      viewMode === "table"
-                        ? "bg-indigo-50 text-indigo-700"
-                        : "bg-white text-slate-500 hover:bg-slate-50"
-                    }`}
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Status filter */}
+                  <select
+                    value={statusFilter}
+                    onChange={(e) =>
+                      setStatusFilter(e.target.value as Visibility | "all")
+                    }
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
                   >
-                    جدول
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("cards")}
-                    className={`px-3 py-2 text-sm ${
-                      viewMode === "cards"
-                        ? "bg-indigo-50 text-indigo-700"
-                        : "bg-white text-slate-500 hover:bg-slate-50"
-                    }`}
+                    <option value="all">همه وضعیت‌ها</option>
+                    <option value="general">عمومی</option>
+                    <option value="draft">پیش‌نویس</option>
+                    <option value="private">خصوصی</option>
+                    <option value="limited">محدود</option>
+                  </select>
+
+                  {/* Category filter */}
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(Number(e.target.value))}
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400"
                   >
-                    کارت
-                  </button>
+                    {CATEGORIES.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.title}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Active only */}
+                  <label className="flex items-center gap-2 text-sm text-slate-600">
+                    <input
+                      type="checkbox"
+                      checked={activeOnly}
+                      onChange={(e) => setActiveOnly(e.target.checked)}
+                      className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    فقط فعال‌ها
+                  </label>
+
+                  {/* View mode */}
+                  <div className="flex overflow-hidden rounded-lg border border-slate-200">
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("table")}
+                      className={`px-3 py-2 text-sm ${
+                        viewMode === "table"
+                          ? "bg-indigo-50 text-indigo-700"
+                          : "bg-white text-slate-500 hover:bg-slate-50"
+                      }`}
+                    >
+                      جدول
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("cards")}
+                      className={`px-3 py-2 text-sm ${
+                        viewMode === "cards"
+                          ? "bg-indigo-50 text-indigo-700"
+                          : "bg-white text-slate-500 hover:bg-slate-50"
+                      }`}
+                    >
+                      کارت
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Bulk actions */}
-            {selectedIds.length > 0 && (
-              <div className="mt-4 flex items-center gap-3 rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-3">
-                <span className="text-sm font-medium text-indigo-800">
-                  {selectedIds.length} مورد انتخاب شده
-                </span>
+              {/* Bulk actions */}
+              {selectedIds.length > 0 && (
+                <div className="mt-4 flex items-center gap-3 rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-3">
+                  <span className="text-sm font-medium text-indigo-800">
+                    {selectedIds.length} مورد انتخاب شده
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleBulkDelete}
+                    className="rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200"
+                  >
+                    حذف گروهی
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedIds([])}
+                    className="text-xs text-slate-500 hover:text-slate-700"
+                  >
+                    لغو انتخاب
+                  </button>
+                </div>
+              )}
+            </section>
+
+            {/* Results count + Sort */}
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm text-slate-500">
+                نمایش {filteredPosts.length} از {posts.length} مقاله
+              </p>
+
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-slate-500">مرتب‌سازی:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) =>
+                    setSortBy(
+                      e.target.value as "updated_at" | "seo_score" | "title",
+                    )
+                  }
+                  className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm"
+                >
+                  <option value="updated_at">آخرین ویرایش</option>
+                  <option value="seo_score">امتیاز SEO</option>
+                  <option value="title">عنوان</option>
+                </select>
                 <button
                   type="button"
-                  onClick={handleBulkDelete}
-                  className="rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200"
+                  onClick={() =>
+                    setSortDir((d) => (d === "asc" ? "desc" : "asc"))
+                  }
+                  className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm hover:bg-slate-50"
                 >
-                  حذف گروهی
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedIds([])}
-                  className="text-xs text-slate-500 hover:text-slate-700"
-                >
-                  لغو انتخاب
+                  {sortDir === "asc" ? "↑ صعودی" : "↓ نزولی"}
                 </button>
               </div>
-            )}
-          </section>
-
-          {/* Results count + Sort */}
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-slate-500">
-              نمایش {filteredPosts.length} از {posts.length} مقاله
-            </p>
-
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-slate-500">مرتب‌سازی:</span>
-              <select
-                value={sortBy}
-                onChange={(e) =>
-                  setSortBy(
-                    e.target.value as "updated_at" | "seo_score" | "title",
-                  )
-                }
-                className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm"
-              >
-                <option value="updated_at">آخرین ویرایش</option>
-                <option value="seo_score">امتیاز SEO</option>
-                <option value="title">عنوان</option>
-              </select>
-              <button
-                type="button"
-                onClick={() =>
-                  setSortDir((d) => (d === "asc" ? "desc" : "asc"))
-                }
-                className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm hover:bg-slate-50"
-              >
-                {sortDir === "asc" ? "↑ صعودی" : "↓ نزولی"}
-              </button>
             </div>
-          </div>
 
-          {/* Content */}
-          {loading ? (
-            <div>Loading...</div>
-          ) : filteredPosts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-20 text-center">
-              <p className="text-lg font-medium text-slate-600">
-                مقاله‌ای یافت نشد
-              </p>
-              <p className="mt-2 text-sm text-slate-400">
-                فیلترها را تغییر دهید یا مقاله جدیدی بسازید.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  window.location.href = "/posts/create";
-                }}
-                className="mt-6 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
-              >
-                ساخت مقاله جدید
-              </button>
-            </div>
-          ) : viewMode === "table" ? (
-            /* ===================== TABLE VIEW ===================== */
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-slate-200 bg-slate-50 text-right text-xs font-medium text-slate-500">
-                      <th className="w-10 px-4 py-3">
-                        <input
-                          type="checkbox"
-                          checked={
-                            filteredPosts.length > 0 &&
-                            selectedIds.length === filteredPosts.length
-                          }
-                          onChange={toggleSelectAll}
-                          className="rounded border-slate-300 text-indigo-600"
-                        />
-                      </th>
-                      <th className="px-4 py-3">عنوان</th>
-                      <th className="px-4 py-3">وضعیت</th>
-                      <th className="px-4 py-3">دسته</th>
-                      <th className="px-4 py-3">SEO</th>
-                      <th className="px-4 py-3">نویسنده</th>
-                      <th className="px-4 py-3">آخرین ویرایش</th>
-                      <th className="px-4 py-3 text-left">عملیات</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {filteredPosts.map((post) => (
-                      <tr
-                        key={post.id}
-                        className={`transition hover:bg-slate-50/80 ${
-                          selectedIds.includes(post.id) ? "bg-indigo-50/40" : ""
-                        }`}
-                      >
-                        <td className="px-4 py-3">
+            {/* Content */}
+            {loading ? (
+              <div>Loading...</div>
+            ) : filteredPosts.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-20 text-center">
+                <p className="text-lg font-medium text-slate-600">
+                  مقاله‌ای یافت نشد
+                </p>
+                <p className="mt-2 text-sm text-slate-400">
+                  فیلترها را تغییر دهید یا مقاله جدیدی بسازید.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.location.href = "/posts/create";
+                  }}
+                  className="mt-6 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
+                >
+                  ساخت مقاله جدید
+                </button>
+              </div>
+            ) : viewMode === "table" ? (
+              /* ===================== TABLE VIEW ===================== */
+              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-200 bg-slate-50 text-right text-xs font-medium text-slate-500">
+                        <th className="w-10 px-4 py-3">
                           <input
                             type="checkbox"
-                            checked={selectedIds.includes(post.id)}
-                            onChange={() => toggleSelect(post.id)}
+                            checked={
+                              filteredPosts.length > 0 &&
+                              selectedIds.length === filteredPosts.length
+                            }
+                            onChange={toggleSelectAll}
                             className="rounded border-slate-300 text-indigo-600"
                           />
-                        </td>
+                        </th>
+                        <th className="px-4 py-3">عنوان</th>
+                        <th className="px-4 py-3">وضعیت</th>
+                        <th className="px-4 py-3">دسته</th>
+                        <th className="px-4 py-3">SEO</th>
+                        <th className="px-4 py-3">نویسنده</th>
+                        <th className="px-4 py-3">آخرین ویرایش</th>
+                        <th className="px-4 py-3 text-left">عملیات</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {filteredPosts.map((post) => (
+                        <tr
+                          key={post.id}
+                          className={`transition hover:bg-slate-50/80 ${
+                            selectedIds.includes(post.id)
+                              ? "bg-indigo-50/40"
+                              : ""
+                          }`}
+                        >
+                          <td className="px-4 py-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedIds.includes(post.id)}
+                              onChange={() => toggleSelect(post.id)}
+                              className="rounded border-slate-300 text-indigo-600"
+                            />
+                          </td>
 
-                        <td className="px-4 py-3">
-                          <div className="flex items-start gap-3">
-                            {post.featured_image ? (
-                              <img
-                                src={post.featured_image}
-                                alt=""
-                                className="h-12 w-16 shrink-0 rounded-lg object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-12 w-16 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs text-slate-400">
-                                بدون تصویر
-                              </div>
-                            )}
-                            <div className="min-w-0">
-                              <p className="font-medium text-slate-800 line-clamp-1">
-                                {post.title}
-                              </p>
-                              <p
-                                className="mt-0.5 text-xs text-slate-400"
-                                dir="ltr"
-                              >
-                                /{post.slug}
-                              </p>
-                              <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-400">
-                                <span>{post.word_count} کلمه</span>
-                                <span>•</span>
-                                <span>{post.reading_time} دقیقه</span>
-                                {!post.is_active && (
-                                  <>
-                                    <span>•</span>
-                                    <span className="text-red-500">
-                                      غیرفعال
-                                    </span>
-                                  </>
-                                )}
+                          <td className="px-4 py-3">
+                            <div className="flex items-start gap-3">
+                              {post.featured_image ? (
+                                <img
+                                  src={post.featured_image}
+                                  alt=""
+                                  className="h-12 w-16 shrink-0 rounded-lg object-cover"
+                                />
+                              ) : (
+                                <div className="flex h-12 w-16 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs text-slate-400">
+                                  بدون تصویر
+                                </div>
+                              )}
+                              <div className="min-w-0">
+                                <p className="font-medium text-slate-800 line-clamp-1">
+                                  {post.title}
+                                </p>
+                                <p
+                                  className="mt-0.5 text-xs text-slate-400"
+                                  dir="ltr"
+                                >
+                                  /{post.slug}
+                                </p>
+                                <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-400">
+                                  <span>{post.word_count} کلمه</span>
+                                  <span>•</span>
+                                  <span>{post.reading_time} دقیقه</span>
+                                  {!post.is_active && (
+                                    <>
+                                      <span>•</span>
+                                      <span className="text-red-500">
+                                        غیرفعال
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
+                          </td>
 
-                        <td className="px-4 py-3">
-                          <span
-                            className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${getVisibilityBadge(
-                              post.visibility,
-                            )}`}
-                          >
-                            {getVisibilityLabel(post.visibility)}
-                          </span>
-                        </td>
-
-                        <td className="px-4 py-3 text-slate-600">
-                          {post.category_title || (
-                            <XIcon className="size-5 text-rose-500" />
-                          )}
-                        </td>
-
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
+                          <td className="px-4 py-3">
                             <span
-                              className={`inline-flex h-7 w-10 items-center justify-center rounded-lg text-xs font-bold ${getSeoBadge(
-                                post.seo_score,
+                              className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${getVisibilityBadge(
+                                post.visibility,
                               )}`}
                             >
-                              {post.seo_score}
+                              {getVisibilityLabel(post.visibility)}
                             </span>
-                            <span className="text-[11px] text-slate-400">
-                              {getSeoStatus(post.seo_score)}
-                            </span>
-                          </div>
-                        </td>
+                          </td>
 
-                        <td className="px-4 py-3 text-slate-600">
-                          {post.author_name}
-                        </td>
+                          <td className="px-4 py-3 text-slate-600">
+                            {post.category_title || (
+                              <XIcon className="size-5 text-rose-500" />
+                            )}
+                          </td>
 
-                        <td className="px-4 py-3 text-xs text-slate-500">
-                          {formatDate(post.updated_at)}
-                        </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`inline-flex h-7 w-10 items-center justify-center rounded-lg text-xs font-bold ${getSeoBadge(
+                                  post.seo_score,
+                                )}`}
+                              >
+                                {post.seo_score}
+                              </span>
+                              <span className="text-[11px] text-slate-400">
+                                {getSeoStatus(post.seo_score)}
+                              </span>
+                            </div>
+                          </td>
 
-                        <td className="px-4 py-3">
-                          <div className="flex items-center justify-end gap-1">
-                            <button
-                              type="button"
-                              title="ویرایش"
-                              onClick={() => {
-                                // Navigate to edit page
-                                window.location.href = `/posts/${post.id}/edit`;
-                              }}
-                              className="rounded-lg px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
-                            >
-                              ویرایش
-                            </button>
-                            <Link
-                              href={`/panel/posts/${post.id}/show`}
-                              title="مشاهده جزئیات"
-                              className="rounded-lg px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
-                            >
-                              مشاهده
-                            </Link>
-                            <button
-                              type="button"
-                              title={
-                                post.is_active ? "غیرفعال کردن" : "فعال کردن"
-                              }
-                              onClick={() => handleToggleActive(post)}
-                              className="rounded-lg px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-100"
-                            >
-                              {post.is_active ? "غیرفعال" : "فعال"}
-                            </button>
-                            <button
-                              type="button"
-                              title="حذف"
-                              onClick={() => handleDelete(post.id)}
-                              className="rounded-lg px-2.5 py-1.5 text-xs text-red-600 hover:bg-red-5 0"
-                            >
-                              حذف
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          <td className="px-4 py-3 text-slate-600">
+                            {post.author_name}
+                          </td>
+
+                          <td className="px-4 py-3 text-xs text-slate-500">
+                            {formatDate(post.updated_at)}
+                          </td>
+
+                          <td className="px-4 py-3">
+                            <div className="flex items-center justify-end gap-1">
+                              <button
+                                type="button"
+                                title="ویرایش"
+                                onClick={() => {
+                                  // Navigate to edit page
+                                  window.location.href = `/posts/${post.id}/edit`;
+                                }}
+                                className="rounded-lg px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
+                              >
+                                ویرایش
+                              </button>
+                              <Link
+                                href={`/panel/posts/${post.id}/show`}
+                                title="مشاهده جزئیات"
+                                className="rounded-lg px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
+                              >
+                                مشاهده
+                              </Link>
+                              <button
+                                type="button"
+                                title={
+                                  post.is_active ? "غیرفعال کردن" : "فعال کردن"
+                                }
+                                onClick={() => handleToggleActive(post)}
+                                className="rounded-lg px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-100"
+                              >
+                                {post.is_active ? "غیرفعال" : "فعال"}
+                              </button>
+                              <button
+                                type="button"
+                                title="حذف"
+                                onClick={() => handleDelete(post.id)}
+                                className="rounded-lg px-2.5 py-1.5 text-xs text-red-600 hover:bg-red-5 0"
+                              >
+                                حذف
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          ) : (
-            /* ===================== CARDS VIEW ===================== */
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {filteredPosts.map((post) => (
-                <article
-                  key={post.id}
-                  className={`group overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md ${
-                    selectedIds.includes(post.id)
-                      ? "border-indigo-300 ring-2 ring-indigo-100"
-                      : "border-slate-200"
-                  }`}
-                >
-                  {/* Image */}
-                  <div className="relative h-40 bg-slate-100">
-                    {post.featured_image ? (
-                      <img
-                        src={post.featured_image}
-                        alt={post.title}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-sm text-slate-400">
-                        بدون تصویر شاخص
+            ) : (
+              /* ===================== CARDS VIEW ===================== */
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {filteredPosts.map((post) => (
+                  <article
+                    key={post.id}
+                    className={`group overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md ${
+                      selectedIds.includes(post.id)
+                        ? "border-indigo-300 ring-2 ring-indigo-100"
+                        : "border-slate-200"
+                    }`}
+                  >
+                    {/* Image */}
+                    <div className="relative h-40 bg-slate-100">
+                      {post.featured_image ? (
+                        <img
+                          src={post.featured_image}
+                          alt={post.title}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-sm text-slate-400">
+                          بدون تصویر شاخص
+                        </div>
+                      )}
+
+                      <div className="absolute left-3 top-3">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(post.id)}
+                          onChange={() => toggleSelect(post.id)}
+                          className="h-4 w-4 rounded border-white/80 bg-white/90 text-indigo-600 shadow"
+                        />
                       </div>
-                    )}
 
-                    <div className="absolute left-3 top-3">
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.includes(post.id)}
-                        onChange={() => toggleSelect(post.id)}
-                        className="h-4 w-4 rounded border-white/80 bg-white/90 text-indigo-600 shadow"
-                      />
+                      <div className="absolute right-3 top-3">
+                        <span
+                          className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium backdrop-blur ${getVisibilityBadge(
+                            post.visibility,
+                          )}`}
+                        >
+                          {getVisibilityLabel(post.visibility)}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="absolute right-3 top-3">
-                      <span
-                        className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium backdrop-blur ${getVisibilityBadge(
-                          post.visibility,
-                        )}`}
-                      >
-                        {getVisibilityLabel(post.visibility)}
-                      </span>
+                    {/* Body */}
+                    <div className="p-5">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <span className="text-xs text-slate-400">
+                          {post.category_title}
+                        </span>
+                        <span
+                          className={`inline-flex h-6 min-w-[2.25rem] items-center justify-center rounded-md px-1.5 text-xs font-bold ${getSeoBadge(
+                            post.seo_score,
+                          )}`}
+                        >
+                          {post.seo_score}
+                        </span>
+                      </div>
+
+                      <h3 className="line-clamp-2 text-base font-semibold text-slate-800 group-hover:text-indigo-700">
+                        {post.title}
+                      </h3>
+
+                      <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">
+                        {post.excerpt || "بدون خلاصه"}
+                      </p>
+
+                      <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
+                        <span>{post.author_name}</span>
+                        <span>{formatDate(post.updated_at)}</span>
+                      </div>
+
+                      <div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-4">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            window.location.href = `/posts/${post.id}/edit`;
+                          }}
+                          className="flex-1 rounded-lg bg-slate-100 py-2 text-xs font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-700"
+                        >
+                          ویرایش
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(post.id)}
+                          className="rounded-lg px-3 py-2 text-xs text-red-600 hover:bg-red-50"
+                        >
+                          حذف
+                        </button>
+                      </div>
                     </div>
-                  </div>
-
-                  {/* Body */}
-                  <div className="p-5">
-                    <div className="mb-2 flex items-center justify-between gap-2">
-                      <span className="text-xs text-slate-400">
-                        {post.category_title}
-                      </span>
-                      <span
-                        className={`inline-flex h-6 min-w-[2.25rem] items-center justify-center rounded-md px-1.5 text-xs font-bold ${getSeoBadge(
-                          post.seo_score,
-                        )}`}
-                      >
-                        {post.seo_score}
-                      </span>
-                    </div>
-
-                    <h3 className="line-clamp-2 text-base font-semibold text-slate-800 group-hover:text-indigo-700">
-                      {post.title}
-                    </h3>
-
-                    <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-500">
-                      {post.excerpt || "بدون خلاصه"}
-                    </p>
-
-                    <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
-                      <span>{post.author_name}</span>
-                      <span>{formatDate(post.updated_at)}</span>
-                    </div>
-
-                    <div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-4">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          window.location.href = `/posts/${post.id}/edit`;
-                        }}
-                        className="flex-1 rounded-lg bg-slate-100 py-2 text-xs font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-700"
-                      >
-                        ویرایش
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(post.id)}
-                        className="rounded-lg px-3 py-2 text-xs text-red-600 hover:bg-red-50"
-                      >
-                        حذف
-                      </button>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </main>
-      </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </main>
+        </div>
+      </PanelLayout>
     </>
   );
 }

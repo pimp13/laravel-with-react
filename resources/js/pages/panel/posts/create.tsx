@@ -29,6 +29,7 @@ import {
 } from "@/lib/helpers";
 import AppLayout from "@/layouts/AppLayout";
 import { useToast } from "@/components/ui/Toastalert";
+import PanelLayout from "@/layouts/PanelLayout";
 
 /**
  * WordPress / Yoast / RankMath-style post editor.
@@ -1200,1286 +1201,1326 @@ export default function CreatePostPage() {
   ] as const;
 
   return (
-    <div dir="rtl" className="min-h-screen bg-slate-100 text-slate-900">
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-lg font-bold">ساخت مقاله جدید</h1>
-              <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
-                SEO Editor
-              </span>
+    <PanelLayout title="مشاهده پست">
+      <div dir="rtl" className="min-h-screen bg-slate-100 text-slate-900">
+        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div>
+              <div className="flex items-center gap-3">
+                <h1 className="text-lg font-bold">ساخت مقاله جدید</h1>
+                <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700">
+                  SEO Editor
+                </span>
+              </div>
+              <p className="mt-0.5 text-xs text-slate-500">
+                ویرایشگر حرفه‌ای محتوا و سئو
+              </p>
             </div>
-            <p className="mt-0.5 text-xs text-slate-500">
-              ویرایشگر حرفه‌ای محتوا و سئو
-            </p>
-          </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setField("visibility", "draft")}
-              className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
-            >
-              ذخیره پیش‌نویس
-            </button>
-
-            <button
-              type="submit"
-              form="create-post-form"
-              disabled={saving || !form.title.trim() || !form.content.trim()}
-              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {saving && (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-              )}
-              {saving ? "در حال ذخیره..." : "انتشار مقاله"}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <form
-        id="create-post-form"
-        onSubmit={handleSubmit}
-        className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
-      >
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <main className="space-y-6 lg:col-span-2">
-            <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <Field label="عنوان مقاله">
-                <input
-                  value={form.title}
-                  onChange={(event) => setField("title", event.target.value)}
-                  placeholder="عنوان واضح و دقیق مقاله..."
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-lg outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
-                  required
-                />
-              </Field>
-
-              <Field
-                label="نامک (Slug)"
-                hint={slugManual ? "ویرایش دستی فعال است" : "تولید خودکار"}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setField("visibility", "draft")}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-400">/blog/</span>
+                ذخیره پیش‌نویس
+              </button>
 
+              <button
+                type="submit"
+                form="create-post-form"
+                disabled={saving || !form.title.trim() || !form.content.trim()}
+                className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {saving && (
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                )}
+                {saving ? "در حال ذخیره..." : "انتشار مقاله"}
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <form
+          id="create-post-form"
+          onSubmit={handleSubmit}
+          className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
+        >
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <main className="space-y-6 lg:col-span-2">
+              <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <Field label="عنوان مقاله">
                   <input
-                    value={form.slug}
-                    onChange={(event) => {
-                      setSlugManual(true);
-                      setField(
-                        "slug",
-                        event.target.value.toLowerCase().replace(/\s+/g, "-"),
-                      );
-                    }}
-                    className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
-                    dir="ltr"
+                    value={form.title}
+                    onChange={(event) => setField("title", event.target.value)}
+                    placeholder="عنوان واضح و دقیق مقاله..."
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-lg outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
+                    required
                   />
+                </Field>
 
-                  <button
-                    type="button"
-                    onClick={() => setSlugManual((current) => !current)}
-                    className="rounded-lg bg-slate-100 px-3 py-2 text-xs text-slate-700 hover:bg-slate-200"
-                  >
-                    {slugManual ? "تولید خودکار" : "ویرایش دستی"}
-                  </button>
+                <Field
+                  label="نامک (Slug)"
+                  hint={slugManual ? "ویرایش دستی فعال است" : "تولید خودکار"}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-slate-400">/blog/</span>
+
+                    <input
+                      value={form.slug}
+                      onChange={(event) => {
+                        setSlugManual(true);
+                        setField(
+                          "slug",
+                          event.target.value.toLowerCase().replace(/\s+/g, "-"),
+                        );
+                      }}
+                      className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
+                      dir="ltr"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setSlugManual((current) => !current)}
+                      className="rounded-lg bg-slate-100 px-3 py-2 text-xs text-slate-700 hover:bg-slate-200"
+                    >
+                      {slugManual ? "تولید خودکار" : "ویرایش دستی"}
+                    </button>
+                  </div>
+
+                  {form.slug && (
+                    <p
+                      className="mt-2 truncate text-xs text-slate-400"
+                      dir="ltr"
+                    >
+                      {getDefaultCanonical(form.slug)}
+                    </p>
+                  )}
+                </Field>
+              </section>
+
+              <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div className="flex overflow-x-auto border-b border-slate-200">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`min-w-fit flex-1 px-4 py-3.5 text-sm font-medium transition ${
+                        activeTab === tab.id
+                          ? "border-b-2 border-indigo-600 bg-indigo-50/60 text-indigo-700"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
 
-                {form.slug && (
-                  <p className="mt-2 truncate text-xs text-slate-400" dir="ltr">
-                    {getDefaultCanonical(form.slug)}
-                  </p>
-                )}
-              </Field>
-            </section>
-
-            <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div className="flex overflow-x-auto border-b border-slate-200">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`min-w-fit flex-1 px-4 py-3.5 text-sm font-medium transition ${
-                      activeTab === tab.id
-                        ? "border-b-2 border-indigo-600 bg-indigo-50/60 text-indigo-700"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-
-              <div className="p-6">
-                {activeTab === "content" && (
-                  <div className="space-y-6">
-                    <Field label="محتوای مقاله">
-                      {editor && (
-                        <div className="flex flex-wrap gap-1 rounded-t-xl border border-slate-200 bg-slate-50 p-2">
-                          <ToolbarButton
-                            title="Bold"
-                            isActive={editor.isActive("bold")}
-                            onClick={() =>
-                              editor.chain().focus().toggleBold().run()
-                            }
-                          >
-                            <b>B</b>
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="Italic"
-                            isActive={editor.isActive("italic")}
-                            onClick={() =>
-                              editor.chain().focus().toggleItalic().run()
-                            }
-                          >
-                            <i>I</i>
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="Underline"
-                            isActive={editor.isActive("underline")}
-                            onClick={() =>
-                              editor.chain().focus().toggleUnderline().run()
-                            }
-                          >
-                            <u>U</u>
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="Strike"
-                            isActive={editor.isActive("strike")}
-                            onClick={() =>
-                              editor.chain().focus().toggleStrike().run()
-                            }
-                          >
-                            <s>S</s>
-                          </ToolbarButton>
-
-                          <span className="mx-1 h-6 w-px self-center bg-slate-300" />
-
-                          <ToolbarButton
-                            title="H1"
-                            isActive={editor.isActive("heading", { level: 1 })}
-                            onClick={() =>
-                              editor
-                                .chain()
-                                .focus()
-                                .toggleHeading({
-                                  level: 1,
-                                })
-                                .run()
-                            }
-                          >
-                            H1
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="H2"
-                            isActive={editor.isActive("heading", { level: 2 })}
-                            onClick={() =>
-                              editor
-                                .chain()
-                                .focus()
-                                .toggleHeading({
-                                  level: 2,
-                                })
-                                .run()
-                            }
-                          >
-                            H2
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="H3"
-                            isActive={editor.isActive("heading", { level: 3 })}
-                            onClick={() =>
-                              editor
-                                .chain()
-                                .focus()
-                                .toggleHeading({
-                                  level: 3,
-                                })
-                                .run()
-                            }
-                          >
-                            H3
-                          </ToolbarButton>
-
-                          <span className="mx-1 h-6 w-px self-center bg-slate-300" />
-
-                          <ToolbarButton
-                            title="لیست"
-                            isActive={editor.isActive("bulletList")}
-                            onClick={() =>
-                              editor.chain().focus().toggleBulletList().run()
-                            }
-                          >
-                            • لیست
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="لیست شماره‌ای"
-                            isActive={editor.isActive("orderedList")}
-                            onClick={() =>
-                              editor.chain().focus().toggleOrderedList().run()
-                            }
-                          >
-                            1. لیست
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="Quote"
-                            isActive={editor.isActive("blockquote")}
-                            onClick={() =>
-                              editor.chain().focus().toggleBlockquote().run()
-                            }
-                          >
-                            نقل‌قول
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="Code"
-                            isActive={editor.isActive("codeBlock")}
-                            onClick={() =>
-                              editor.chain().focus().toggleCodeBlock().run()
-                            }
-                          >
-                            {"</>"}
-                          </ToolbarButton>
-
-                          <span className="mx-1 h-6 w-px self-center bg-slate-300" />
-
-                          <ToolbarButton
-                            title="راست‌چین"
-                            onClick={() =>
-                              editor.chain().focus().setTextAlign("right").run()
-                            }
-                          >
-                            راست
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="وسط‌چین"
-                            onClick={() =>
-                              editor
-                                .chain()
-                                .focus()
-                                .setTextAlign("center")
-                                .run()
-                            }
-                          >
-                            وسط
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="چپ‌چین"
-                            onClick={() =>
-                              editor.chain().focus().setTextAlign("left").run()
-                            }
-                          >
-                            چپ
-                          </ToolbarButton>
-
-                          <span className="mx-1 h-6 w-px self-center bg-slate-300" />
-
-                          <ToolbarButton
-                            title="لینک"
-                            isActive={editor.isActive("link")}
-                            onClick={setEditorLink}
-                          >
-                            لینک
-                          </ToolbarButton>
-
-                          <ToolbarButton
-                            title="تصویر از URL"
-                            onClick={addEditorImage}
-                          >
-                            تصویر
-                          </ToolbarButton>
-
-                          <label
-                            className={`cursor-pointer rounded-lg px-2.5 py-2 text-sm text-slate-600 hover:bg-slate-100 ${
-                              uploadingEditorImage
-                                ? "pointer-events-none opacity-50"
-                                : ""
-                            }`}
-                          >
-                            {uploadingEditorImage ? "آپلود..." : "آپلود تصویر"}
-                            <input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={handleEditorImageUpload}
-                            />
-                          </label>
-                        </div>
-                      )}
-
-                      <div className="overflow-hidden rounded-b-xl border border-t-0 border-slate-200 bg-white">
-                        <EditorContent editor={editor} />
-                      </div>
-
-                      <div className="mt-2 flex flex-wrap gap-4 text-xs text-slate-500">
-                        <span>{form.meta.word_count} کلمه</span>
-                        <span>{form.meta.reading_time} دقیقه مطالعه</span>
-                        <span>{headings.length} تیتر</span>
-                        <span>{links.length} لینک</span>
-                        <span>{images.length} تصویر</span>
-                      </div>
-                    </Field>
-
-                    <Field
-                      label="خلاصه مقاله (Excerpt)"
-                      hint="برای کارت مقاله و fallback توضیحات"
-                    >
-                      <textarea
-                        value={form.excerpt}
-                        onChange={(event) =>
-                          setField("excerpt", event.target.value)
-                        }
-                        rows={4}
-                        placeholder="خلاصه‌ای دقیق و جذاب از مقاله..."
-                        className="w-full resize-none rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
-                      />
-                      <Counter
-                        value={form.excerpt.length}
-                        recommended="پیشنهاد: حدود 120 تا 160 کاراکتر"
-                      />
-                    </Field>
-                  </div>
-                )}
-
-                {activeTab === "seo" && (
-                  <div className="space-y-8">
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                      <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div>
-                          <p className="text-sm font-semibold text-slate-800">
-                            تحلیل SEO
-                          </p>
-                          <p className="mt-1 text-xs text-slate-500">
-                            این امتیاز یک چک‌لیست داخلی برای کیفیت و کامل بودن
-                            تنظیمات مقاله است.
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <div className="h-3 w-40 overflow-hidden rounded-full bg-slate-200">
-                            <div
-                              className={`h-full transition-all ${
-                                seoScore >= 85
-                                  ? "bg-emerald-500"
-                                  : seoScore >= 70
-                                    ? "bg-blue-500"
-                                    : seoScore >= 50
-                                      ? "bg-amber-500"
-                                      : "bg-red-500"
-                              }`}
-                              style={{
-                                width: `${seoScore}%`,
-                              }}
-                            />
-                          </div>
-                          <div className="text-left">
-                            <div
-                              className={`text-2xl font-bold ${getStatusClass(
-                                seoScore,
-                              )}`}
+                <div className="p-6">
+                  {activeTab === "content" && (
+                    <div className="space-y-6">
+                      <Field label="محتوای مقاله">
+                        {editor && (
+                          <div className="flex flex-wrap gap-1 rounded-t-xl border border-slate-200 bg-slate-50 p-2">
+                            <ToolbarButton
+                              title="Bold"
+                              isActive={editor.isActive("bold")}
+                              onClick={() =>
+                                editor.chain().focus().toggleBold().run()
+                              }
                             >
-                              {seoScore}
-                            </div>
-                            <div className="text-[11px] text-slate-500">
-                              {getSeoStatus(seoScore)}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                              <b>B</b>
+                            </ToolbarButton>
 
-                    <Section
-                      title="SEO پایه"
-                      description="تنظیمات اصلی که روی عنوان، snippet و canonical صفحه اثر دارند."
-                    >
-                      <Field
-                        label="Meta Title"
-                        hint={`${form.meta.meta_title.length}/60`}
-                      >
-                        <input
-                          value={form.meta.meta_title}
-                          maxLength={70}
-                          onChange={(event) =>
-                            setMeta("meta_title", event.target.value)
-                          }
-                          placeholder="عنوانی که برای موتور جستجو مناسب است"
-                          className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
-                        />
-                        <Counter
-                          value={form.meta.meta_title.length}
-                          recommended="بازه پیشنهادی رابط کاربری: 30 تا 60"
-                        />
+                            <ToolbarButton
+                              title="Italic"
+                              isActive={editor.isActive("italic")}
+                              onClick={() =>
+                                editor.chain().focus().toggleItalic().run()
+                              }
+                            >
+                              <i>I</i>
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="Underline"
+                              isActive={editor.isActive("underline")}
+                              onClick={() =>
+                                editor.chain().focus().toggleUnderline().run()
+                              }
+                            >
+                              <u>U</u>
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="Strike"
+                              isActive={editor.isActive("strike")}
+                              onClick={() =>
+                                editor.chain().focus().toggleStrike().run()
+                              }
+                            >
+                              <s>S</s>
+                            </ToolbarButton>
+
+                            <span className="mx-1 h-6 w-px self-center bg-slate-300" />
+
+                            <ToolbarButton
+                              title="H1"
+                              isActive={editor.isActive("heading", {
+                                level: 1,
+                              })}
+                              onClick={() =>
+                                editor
+                                  .chain()
+                                  .focus()
+                                  .toggleHeading({
+                                    level: 1,
+                                  })
+                                  .run()
+                              }
+                            >
+                              H1
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="H2"
+                              isActive={editor.isActive("heading", {
+                                level: 2,
+                              })}
+                              onClick={() =>
+                                editor
+                                  .chain()
+                                  .focus()
+                                  .toggleHeading({
+                                    level: 2,
+                                  })
+                                  .run()
+                              }
+                            >
+                              H2
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="H3"
+                              isActive={editor.isActive("heading", {
+                                level: 3,
+                              })}
+                              onClick={() =>
+                                editor
+                                  .chain()
+                                  .focus()
+                                  .toggleHeading({
+                                    level: 3,
+                                  })
+                                  .run()
+                              }
+                            >
+                              H3
+                            </ToolbarButton>
+
+                            <span className="mx-1 h-6 w-px self-center bg-slate-300" />
+
+                            <ToolbarButton
+                              title="لیست"
+                              isActive={editor.isActive("bulletList")}
+                              onClick={() =>
+                                editor.chain().focus().toggleBulletList().run()
+                              }
+                            >
+                              • لیست
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="لیست شماره‌ای"
+                              isActive={editor.isActive("orderedList")}
+                              onClick={() =>
+                                editor.chain().focus().toggleOrderedList().run()
+                              }
+                            >
+                              1. لیست
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="Quote"
+                              isActive={editor.isActive("blockquote")}
+                              onClick={() =>
+                                editor.chain().focus().toggleBlockquote().run()
+                              }
+                            >
+                              نقل‌قول
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="Code"
+                              isActive={editor.isActive("codeBlock")}
+                              onClick={() =>
+                                editor.chain().focus().toggleCodeBlock().run()
+                              }
+                            >
+                              {"</>"}
+                            </ToolbarButton>
+
+                            <span className="mx-1 h-6 w-px self-center bg-slate-300" />
+
+                            <ToolbarButton
+                              title="راست‌چین"
+                              onClick={() =>
+                                editor
+                                  .chain()
+                                  .focus()
+                                  .setTextAlign("right")
+                                  .run()
+                              }
+                            >
+                              راست
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="وسط‌چین"
+                              onClick={() =>
+                                editor
+                                  .chain()
+                                  .focus()
+                                  .setTextAlign("center")
+                                  .run()
+                              }
+                            >
+                              وسط
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="چپ‌چین"
+                              onClick={() =>
+                                editor
+                                  .chain()
+                                  .focus()
+                                  .setTextAlign("left")
+                                  .run()
+                              }
+                            >
+                              چپ
+                            </ToolbarButton>
+
+                            <span className="mx-1 h-6 w-px self-center bg-slate-300" />
+
+                            <ToolbarButton
+                              title="لینک"
+                              isActive={editor.isActive("link")}
+                              onClick={setEditorLink}
+                            >
+                              لینک
+                            </ToolbarButton>
+
+                            <ToolbarButton
+                              title="تصویر از URL"
+                              onClick={addEditorImage}
+                            >
+                              تصویر
+                            </ToolbarButton>
+
+                            <label
+                              className={`cursor-pointer rounded-lg px-2.5 py-2 text-sm text-slate-600 hover:bg-slate-100 ${
+                                uploadingEditorImage
+                                  ? "pointer-events-none opacity-50"
+                                  : ""
+                              }`}
+                            >
+                              {uploadingEditorImage
+                                ? "آپلود..."
+                                : "آپلود تصویر"}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleEditorImageUpload}
+                              />
+                            </label>
+                          </div>
+                        )}
+
+                        <div className="overflow-hidden rounded-b-xl border border-t-0 border-slate-200 bg-white">
+                          <EditorContent editor={editor} />
+                        </div>
+
+                        <div className="mt-2 flex flex-wrap gap-4 text-xs text-slate-500">
+                          <span>{form.meta.word_count} کلمه</span>
+                          <span>{form.meta.reading_time} دقیقه مطالعه</span>
+                          <span>{headings.length} تیتر</span>
+                          <span>{links.length} لینک</span>
+                          <span>{images.length} تصویر</span>
+                        </div>
                       </Field>
 
                       <Field
-                        label="Meta Description"
-                        hint={`${form.meta.meta_description.length}/160`}
+                        label="خلاصه مقاله (Excerpt)"
+                        hint="برای کارت مقاله و fallback توضیحات"
                       >
                         <textarea
-                          value={form.meta.meta_description}
-                          maxLength={170}
-                          rows={4}
+                          value={form.excerpt}
                           onChange={(event) =>
-                            setMeta("meta_description", event.target.value)
+                            setField("excerpt", event.target.value)
                           }
-                          placeholder="خلاصه اختصاصی و جذاب صفحه برای نتایج جستجو..."
-                          className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
+                          rows={4}
+                          placeholder="خلاصه‌ای دقیق و جذاب از مقاله..."
+                          className="w-full resize-none rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
                         />
                         <Counter
-                          value={form.meta.meta_description.length}
-                          recommended="بازه پیشنهادی رابط کاربری: 120 تا 160"
+                          value={form.excerpt.length}
+                          recommended="پیشنهاد: حدود 120 تا 160 کاراکتر"
                         />
                       </Field>
+                    </div>
+                  )}
 
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Focus Keyword">
-                          <input
-                            value={form.meta.focus_keyword}
-                            onChange={(event) =>
-                              setMeta("focus_keyword", event.target.value)
-                            }
-                            placeholder="مثلاً Laravel 13"
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
-                          />
-                        </Field>
-
-                        <Field label="Keyword Density">
-                          <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
-                            {focusKeyword
-                              ? `${keywordDensity.toFixed(2)}%`
-                              : "—"}
-                            <span className="mr-2 text-xs text-slate-400">
-                              ({keywordCount} بار)
-                            </span>
-                          </div>
-                        </Field>
-                      </div>
-
-                      <Field
-                        label="Focus Keywords / Synonyms"
-                        hint="Enter برای افزودن"
-                      >
-                        <div className="flex gap-2">
-                          <input
-                            value={tagInput}
-                            onChange={(event) =>
-                              setTagInput(event.target.value)
-                            }
-                            onKeyDown={(event) => {
-                              if (event.key === "Enter") {
-                                event.preventDefault();
-                                addTag();
-                              }
-                            }}
-                            placeholder="عبارت مرتبط..."
-                            className="flex-1 rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
-                          />
-                          <button
-                            type="button"
-                            onClick={addTag}
-                            className="rounded-lg bg-slate-100 px-4 text-sm hover:bg-slate-200"
-                          >
-                            افزودن
-                          </button>
-                        </div>
-
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {form.meta.focus_keywords.map((keyword) => (
-                            <span
-                              key={keyword}
-                              className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1.5 text-xs text-indigo-700"
-                            >
-                              {keyword}
-                              <button
-                                type="button"
-                                onClick={() => removeKeyword(keyword)}
-                                className="font-bold"
-                              >
-                                ×
-                              </button>
-                            </span>
-                          ))}
-                        </div>
-                      </Field>
-
-                      <Field label="Canonical URL" hint="URL نهایی و اصلی صفحه">
-                        <input
-                          type="url"
-                          value={form.meta.canonical_url}
-                          onChange={(event) =>
-                            setMeta("canonical_url", event.target.value)
-                          }
-                          placeholder={`${SITE_URL}/blog/example`}
-                          className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
-                          dir="ltr"
-                        />
-                      </Field>
-                    </Section>
-
-                    <Section
-                      title="Robots"
-                      description="کنترل index/follow و previewهای موتورهای جستجو."
-                    >
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Index">
-                          <select
-                            value={form.meta.robots.index}
-                            onChange={(event) =>
-                              setRobots(
-                                "index",
-                                event.target.value as RobotsIndex,
-                              )
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          >
-                            <option value="index">index</option>
-                            <option value="noindex">noindex</option>
-                          </select>
-                        </Field>
-
-                        <Field label="Follow">
-                          <select
-                            value={form.meta.robots.follow}
-                            onChange={(event) =>
-                              setRobots(
-                                "follow",
-                                event.target.value as RobotsFollow,
-                              )
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          >
-                            <option value="follow">follow</option>
-                            <option value="nofollow">nofollow</option>
-                          </select>
-                        </Field>
-
-                        <Field label="Max Image Preview">
-                          <select
-                            value={form.meta.robots.max_image_preview}
-                            onChange={(event) =>
-                              setRobots(
-                                "max_image_preview",
-                                event.target.value as MaxImagePreview,
-                              )
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          >
-                            <option value="large">large</option>
-                            <option value="standard">standard</option>
-                            <option value="none">none</option>
-                          </select>
-                        </Field>
-
-                        <Field label="Max Snippet">
-                          <input
-                            type="number"
-                            value={form.meta.robots.max_snippet}
-                            onChange={(event) =>
-                              setRobots(
-                                "max_snippet",
-                                Number(event.target.value),
-                              )
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          />
-                        </Field>
-                      </div>
-                    </Section>
-
-                    <Section
-                      title="SEO Content Analysis"
-                      description="چک‌لیست مشابه ابزارهای حرفه‌ای ویرایش محتوا."
-                    >
-                      <div className="space-y-2">
-                        {seoChecks.map((check) => (
-                          <div
-                            key={check.id}
-                            className={`flex items-start gap-3 rounded-xl border p-3 ${
-                              check.passed
-                                ? "border-emerald-100 bg-emerald-50/50"
-                                : check.important
-                                  ? "border-red-100 bg-red-50/50"
-                                  : "border-amber-100 bg-amber-50/50"
-                            }`}
-                          >
-                            <span
-                              className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                                check.passed
-                                  ? "bg-emerald-100 text-emerald-700"
-                                  : check.important
-                                    ? "bg-red-100 text-red-700"
-                                    : "bg-amber-100 text-amber-700"
-                              }`}
-                            >
-                              {check.passed ? "✓" : "!"}
-                            </span>
-
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium text-slate-800">
-                                {check.title}
-                              </p>
-                              <p className="mt-1 text-xs leading-5 text-slate-500">
-                                {check.description}
-                              </p>
-                            </div>
-
-                            <span className="mr-auto text-xs text-slate-400">
-                              +{check.points}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </Section>
-
-                    <Section
-                      title="ساختار مقاله"
-                      description="اطلاعاتی که از HTML فعلی Tiptap استخراج شده‌اند."
-                    >
-                      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                        {[
-                          ["کلمات", form.meta.word_count],
-                          ["دقیقه", form.meta.reading_time],
-                          ["Heading", headings.length],
-                          ["لینک داخلی", internalLinks.length],
-                          ["لینک خارجی", externalLinks.length],
-                          ["تصویر", images.length],
-                          ["H1", headings.filter((h) => h.level === 1).length],
-                          ["H2", headings.filter((h) => h.level === 2).length],
-                        ].map(([label, value]) => (
-                          <div
-                            key={String(label)}
-                            className="rounded-xl border border-slate-200 bg-slate-50 p-4"
-                          >
-                            <p className="text-xs text-slate-500">{label}</p>
-                            <p className="mt-1 text-lg font-bold text-slate-800">
-                              {value}
+                  {activeTab === "seo" && (
+                    <div className="space-y-8">
+                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                        <div className="flex flex-wrap items-center justify-between gap-4">
+                          <div>
+                            <p className="text-sm font-semibold text-slate-800">
+                              تحلیل SEO
+                            </p>
+                            <p className="mt-1 text-xs text-slate-500">
+                              این امتیاز یک چک‌لیست داخلی برای کیفیت و کامل بودن
+                              تنظیمات مقاله است.
                             </p>
                           </div>
-                        ))}
-                      </div>
-                    </Section>
-                  </div>
-                )}
 
-                {activeTab === "social" && (
-                  <div className="space-y-8">
-                    <Section
-                      title="Open Graph"
-                      description="اطلاعاتی که هنگام اشتراک صفحه در شبکه‌های اجتماعی استفاده می‌شوند."
-                    >
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="OG Title">
+                          <div className="flex items-center gap-3">
+                            <div className="h-3 w-40 overflow-hidden rounded-full bg-slate-200">
+                              <div
+                                className={`h-full transition-all ${
+                                  seoScore >= 85
+                                    ? "bg-emerald-500"
+                                    : seoScore >= 70
+                                      ? "bg-blue-500"
+                                      : seoScore >= 50
+                                        ? "bg-amber-500"
+                                        : "bg-red-500"
+                                }`}
+                                style={{
+                                  width: `${seoScore}%`,
+                                }}
+                              />
+                            </div>
+                            <div className="text-left">
+                              <div
+                                className={`text-2xl font-bold ${getStatusClass(
+                                  seoScore,
+                                )}`}
+                              >
+                                {seoScore}
+                              </div>
+                              <div className="text-[11px] text-slate-500">
+                                {getSeoStatus(seoScore)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Section
+                        title="SEO پایه"
+                        description="تنظیمات اصلی که روی عنوان، snippet و canonical صفحه اثر دارند."
+                      >
+                        <Field
+                          label="Meta Title"
+                          hint={`${form.meta.meta_title.length}/60`}
+                        >
                           <input
-                            value={form.meta.og.title}
+                            value={form.meta.meta_title}
+                            maxLength={70}
                             onChange={(event) =>
-                              setSocial("og", "title", event.target.value)
+                              setMeta("meta_title", event.target.value)
                             }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            placeholder="عنوانی که برای موتور جستجو مناسب است"
+                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
+                          />
+                          <Counter
+                            value={form.meta.meta_title.length}
+                            recommended="بازه پیشنهادی رابط کاربری: 30 تا 60"
                           />
                         </Field>
 
-                        <Field label="OG Type">
-                          <select
-                            value={form.meta.og.type}
+                        <Field
+                          label="Meta Description"
+                          hint={`${form.meta.meta_description.length}/160`}
+                        >
+                          <textarea
+                            value={form.meta.meta_description}
+                            maxLength={170}
+                            rows={4}
                             onChange={(event) =>
-                              setForm((prev) => ({
-                                ...prev,
-                                meta: {
-                                  ...prev.meta,
-                                  og: {
-                                    ...prev.meta.og,
-                                    type: event.target.value as
-                                      | "article"
-                                      | "website",
-                                  },
-                                },
-                              }))
+                              setMeta("meta_description", event.target.value)
                             }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          >
-                            <option value="article">article</option>
-                            <option value="website">website</option>
-                          </select>
+                            placeholder="خلاصه اختصاصی و جذاب صفحه برای نتایج جستجو..."
+                            className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
+                          />
+                          <Counter
+                            value={form.meta.meta_description.length}
+                            recommended="بازه پیشنهادی رابط کاربری: 120 تا 160"
+                          />
                         </Field>
-                      </div>
 
-                      <Field label="OG Description">
-                        <textarea
-                          value={form.meta.og.description}
-                          rows={3}
-                          onChange={(event) =>
-                            setSocial("og", "description", event.target.value)
-                          }
-                          className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                        />
-                      </Field>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="Focus Keyword">
+                            <input
+                              value={form.meta.focus_keyword}
+                              onChange={(event) =>
+                                setMeta("focus_keyword", event.target.value)
+                              }
+                              placeholder="مثلاً Laravel 13"
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
+                            />
+                          </Field>
 
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="OG Image URL">
+                          <Field label="Keyword Density">
+                            <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
+                              {focusKeyword
+                                ? `${keywordDensity.toFixed(2)}%`
+                                : "—"}
+                              <span className="mr-2 text-xs text-slate-400">
+                                ({keywordCount} بار)
+                              </span>
+                            </div>
+                          </Field>
+                        </div>
+
+                        <Field
+                          label="Focus Keywords / Synonyms"
+                          hint="Enter برای افزودن"
+                        >
+                          <div className="flex gap-2">
+                            <input
+                              value={tagInput}
+                              onChange={(event) =>
+                                setTagInput(event.target.value)
+                              }
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                  event.preventDefault();
+                                  addTag();
+                                }
+                              }}
+                              placeholder="عبارت مرتبط..."
+                              className="flex-1 rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
+                            />
+                            <button
+                              type="button"
+                              onClick={addTag}
+                              className="rounded-lg bg-slate-100 px-4 text-sm hover:bg-slate-200"
+                            >
+                              افزودن
+                            </button>
+                          </div>
+
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {form.meta.focus_keywords.map((keyword) => (
+                              <span
+                                key={keyword}
+                                className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1.5 text-xs text-indigo-700"
+                              >
+                                {keyword}
+                                <button
+                                  type="button"
+                                  onClick={() => removeKeyword(keyword)}
+                                  className="font-bold"
+                                >
+                                  ×
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        </Field>
+
+                        <Field
+                          label="Canonical URL"
+                          hint="URL نهایی و اصلی صفحه"
+                        >
                           <input
                             type="url"
-                            value={form.meta.og.image}
+                            value={form.meta.canonical_url}
                             onChange={(event) =>
-                              setSocial("og", "image", event.target.value)
+                              setMeta("canonical_url", event.target.value)
                             }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            placeholder={`${SITE_URL}/blog/example`}
+                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
                             dir="ltr"
                           />
                         </Field>
+                      </Section>
 
-                        <Field label="OG Image Alt">
-                          <input
-                            value={form.meta.og.image_alt}
-                            onChange={(event) =>
-                              setSocial("og", "image_alt", event.target.value)
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          />
-                        </Field>
-                      </div>
-                    </Section>
+                      <Section
+                        title="Robots"
+                        description="کنترل index/follow و previewهای موتورهای جستجو."
+                      >
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="Index">
+                            <select
+                              value={form.meta.robots.index}
+                              onChange={(event) =>
+                                setRobots(
+                                  "index",
+                                  event.target.value as RobotsIndex,
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            >
+                              <option value="index">index</option>
+                              <option value="noindex">noindex</option>
+                            </select>
+                          </Field>
 
-                    <Section title="Twitter / X Card">
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Card">
-                          <select
-                            value={form.meta.twitter.card}
-                            onChange={(event) =>
-                              setForm((prev) => ({
-                                ...prev,
-                                meta: {
-                                  ...prev.meta,
-                                  twitter: {
-                                    ...prev.meta.twitter,
-                                    card: event.target.value as
-                                      | "summary"
-                                      | "summary_large_image",
+                          <Field label="Follow">
+                            <select
+                              value={form.meta.robots.follow}
+                              onChange={(event) =>
+                                setRobots(
+                                  "follow",
+                                  event.target.value as RobotsFollow,
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            >
+                              <option value="follow">follow</option>
+                              <option value="nofollow">nofollow</option>
+                            </select>
+                          </Field>
+
+                          <Field label="Max Image Preview">
+                            <select
+                              value={form.meta.robots.max_image_preview}
+                              onChange={(event) =>
+                                setRobots(
+                                  "max_image_preview",
+                                  event.target.value as MaxImagePreview,
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            >
+                              <option value="large">large</option>
+                              <option value="standard">standard</option>
+                              <option value="none">none</option>
+                            </select>
+                          </Field>
+
+                          <Field label="Max Snippet">
+                            <input
+                              type="number"
+                              value={form.meta.robots.max_snippet}
+                              onChange={(event) =>
+                                setRobots(
+                                  "max_snippet",
+                                  Number(event.target.value),
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            />
+                          </Field>
+                        </div>
+                      </Section>
+
+                      <Section
+                        title="SEO Content Analysis"
+                        description="چک‌لیست مشابه ابزارهای حرفه‌ای ویرایش محتوا."
+                      >
+                        <div className="space-y-2">
+                          {seoChecks.map((check) => (
+                            <div
+                              key={check.id}
+                              className={`flex items-start gap-3 rounded-xl border p-3 ${
+                                check.passed
+                                  ? "border-emerald-100 bg-emerald-50/50"
+                                  : check.important
+                                    ? "border-red-100 bg-red-50/50"
+                                    : "border-amber-100 bg-amber-50/50"
+                              }`}
+                            >
+                              <span
+                                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                                  check.passed
+                                    ? "bg-emerald-100 text-emerald-700"
+                                    : check.important
+                                      ? "bg-red-100 text-red-700"
+                                      : "bg-amber-100 text-amber-700"
+                                }`}
+                              >
+                                {check.passed ? "✓" : "!"}
+                              </span>
+
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium text-slate-800">
+                                  {check.title}
+                                </p>
+                                <p className="mt-1 text-xs leading-5 text-slate-500">
+                                  {check.description}
+                                </p>
+                              </div>
+
+                              <span className="mr-auto text-xs text-slate-400">
+                                +{check.points}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </Section>
+
+                      <Section
+                        title="ساختار مقاله"
+                        description="اطلاعاتی که از HTML فعلی Tiptap استخراج شده‌اند."
+                      >
+                        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                          {[
+                            ["کلمات", form.meta.word_count],
+                            ["دقیقه", form.meta.reading_time],
+                            ["Heading", headings.length],
+                            ["لینک داخلی", internalLinks.length],
+                            ["لینک خارجی", externalLinks.length],
+                            ["تصویر", images.length],
+                            [
+                              "H1",
+                              headings.filter((h) => h.level === 1).length,
+                            ],
+                            [
+                              "H2",
+                              headings.filter((h) => h.level === 2).length,
+                            ],
+                          ].map(([label, value]) => (
+                            <div
+                              key={String(label)}
+                              className="rounded-xl border border-slate-200 bg-slate-50 p-4"
+                            >
+                              <p className="text-xs text-slate-500">{label}</p>
+                              <p className="mt-1 text-lg font-bold text-slate-800">
+                                {value}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </Section>
+                    </div>
+                  )}
+
+                  {activeTab === "social" && (
+                    <div className="space-y-8">
+                      <Section
+                        title="Open Graph"
+                        description="اطلاعاتی که هنگام اشتراک صفحه در شبکه‌های اجتماعی استفاده می‌شوند."
+                      >
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="OG Title">
+                            <input
+                              value={form.meta.og.title}
+                              onChange={(event) =>
+                                setSocial("og", "title", event.target.value)
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            />
+                          </Field>
+
+                          <Field label="OG Type">
+                            <select
+                              value={form.meta.og.type}
+                              onChange={(event) =>
+                                setForm((prev) => ({
+                                  ...prev,
+                                  meta: {
+                                    ...prev.meta,
+                                    og: {
+                                      ...prev.meta.og,
+                                      type: event.target.value as
+                                        | "article"
+                                        | "website",
+                                    },
                                   },
-                                },
-                              }))
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          >
-                            <option value="summary_large_image">
-                              summary_large_image
-                            </option>
-                            <option value="summary">summary</option>
-                          </select>
-                        </Field>
+                                }))
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            >
+                              <option value="article">article</option>
+                              <option value="website">website</option>
+                            </select>
+                          </Field>
+                        </div>
 
-                        <Field label="Twitter Title">
-                          <input
-                            value={form.meta.twitter.title}
+                        <Field label="OG Description">
+                          <textarea
+                            value={form.meta.og.description}
+                            rows={3}
                             onChange={(event) =>
-                              setSocial("twitter", "title", event.target.value)
+                              setSocial("og", "description", event.target.value)
                             }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          />
-                        </Field>
-                      </div>
-
-                      <Field label="Twitter Description">
-                        <textarea
-                          value={form.meta.twitter.description}
-                          rows={3}
-                          onChange={(event) =>
-                            setSocial(
-                              "twitter",
-                              "description",
-                              event.target.value,
-                            )
-                          }
-                          className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                        />
-                      </Field>
-
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Twitter Image URL">
-                          <input
-                            type="url"
-                            value={form.meta.twitter.image}
-                            onChange={(event) =>
-                              setSocial("twitter", "image", event.target.value)
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                            dir="ltr"
+                            className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
                           />
                         </Field>
 
-                        <Field label="Twitter Image Alt">
-                          <input
-                            value={form.meta.twitter.image_alt}
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="OG Image URL">
+                            <input
+                              type="url"
+                              value={form.meta.og.image}
+                              onChange={(event) =>
+                                setSocial("og", "image", event.target.value)
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                              dir="ltr"
+                            />
+                          </Field>
+
+                          <Field label="OG Image Alt">
+                            <input
+                              value={form.meta.og.image_alt}
+                              onChange={(event) =>
+                                setSocial("og", "image_alt", event.target.value)
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            />
+                          </Field>
+                        </div>
+                      </Section>
+
+                      <Section title="Twitter / X Card">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="Card">
+                            <select
+                              value={form.meta.twitter.card}
+                              onChange={(event) =>
+                                setForm((prev) => ({
+                                  ...prev,
+                                  meta: {
+                                    ...prev.meta,
+                                    twitter: {
+                                      ...prev.meta.twitter,
+                                      card: event.target.value as
+                                        | "summary"
+                                        | "summary_large_image",
+                                    },
+                                  },
+                                }))
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            >
+                              <option value="summary_large_image">
+                                summary_large_image
+                              </option>
+                              <option value="summary">summary</option>
+                            </select>
+                          </Field>
+
+                          <Field label="Twitter Title">
+                            <input
+                              value={form.meta.twitter.title}
+                              onChange={(event) =>
+                                setSocial(
+                                  "twitter",
+                                  "title",
+                                  event.target.value,
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            />
+                          </Field>
+                        </div>
+
+                        <Field label="Twitter Description">
+                          <textarea
+                            value={form.meta.twitter.description}
+                            rows={3}
                             onChange={(event) =>
                               setSocial(
                                 "twitter",
-                                "image_alt",
+                                "description",
+                                event.target.value,
+                              )
+                            }
+                            className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                          />
+                        </Field>
+
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="Twitter Image URL">
+                            <input
+                              type="url"
+                              value={form.meta.twitter.image}
+                              onChange={(event) =>
+                                setSocial(
+                                  "twitter",
+                                  "image",
+                                  event.target.value,
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                              dir="ltr"
+                            />
+                          </Field>
+
+                          <Field label="Twitter Image Alt">
+                            <input
+                              value={form.meta.twitter.image_alt}
+                              onChange={(event) =>
+                                setSocial(
+                                  "twitter",
+                                  "image_alt",
+                                  event.target.value,
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            />
+                          </Field>
+                        </div>
+
+                        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                          <p className="mb-3 text-xs font-medium text-slate-500">
+                            Preview
+                          </p>
+                          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                            {form.meta.twitter.image && (
+                              <img
+                                src={form.meta.twitter.image}
+                                alt={form.meta.twitter.image_alt || form.title}
+                                className="h-48 w-full object-cover"
+                              />
+                            )}
+                            <div className="p-4">
+                              <p className="font-semibold text-slate-800">
+                                {form.meta.twitter.title ||
+                                  form.title ||
+                                  "عنوان مقاله"}
+                              </p>
+                              <p className="mt-1 line-clamp-2 text-sm text-slate-500">
+                                {form.meta.twitter.description ||
+                                  form.excerpt ||
+                                  "توضیحات مقاله"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </Section>
+                    </div>
+                  )}
+
+                  {activeTab === "settings" && (
+                    <div className="space-y-8">
+                      <Section
+                        title="تصویر شاخص"
+                        description="تصویر اصلی مقاله و اطلاعات دسترس‌پذیری آن."
+                      >
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="Featured Image URL">
+                            <input
+                              type="url"
+                              value={form.featured_image}
+                              onChange={(event) =>
+                                setField("featured_image", event.target.value)
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                              dir="ltr"
+                            />
+                          </Field>
+
+                          <Field label="آپلود تصویر">
+                            <label className="flex cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50">
+                              {uploadingImage
+                                ? "در حال آپلود..."
+                                : "انتخاب تصویر"}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleFeaturedImageUpload}
+                              />
+                            </label>
+                          </Field>
+                        </div>
+
+                        <Field label="Featured Image Alt">
+                          <input
+                            value={form.meta.featured_image_alt}
+                            onChange={(event) =>
+                              setMeta("featured_image_alt", event.target.value)
+                            }
+                            placeholder="مثلاً: آموزش Laravel 13"
+                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                          />
+                        </Field>
+
+                        <Field label="Caption">
+                          <input
+                            value={form.meta.featured_image_caption}
+                            onChange={(event) =>
+                              setMeta(
+                                "featured_image_caption",
                                 event.target.value,
                               )
                             }
                             className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
                           />
                         </Field>
-                      </div>
 
-                      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                        <p className="mb-3 text-xs font-medium text-slate-500">
-                          Preview
-                        </p>
-                        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                          {form.meta.twitter.image && (
-                            <img
-                              src={form.meta.twitter.image}
-                              alt={form.meta.twitter.image_alt || form.title}
-                              className="h-48 w-full object-cover"
-                            />
-                          )}
-                          <div className="p-4">
-                            <p className="font-semibold text-slate-800">
-                              {form.meta.twitter.title ||
-                                form.title ||
-                                "عنوان مقاله"}
-                            </p>
-                            <p className="mt-1 line-clamp-2 text-sm text-slate-500">
-                              {form.meta.twitter.description ||
-                                form.excerpt ||
-                                "توضیحات مقاله"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </Section>
-                  </div>
-                )}
-
-                {activeTab === "settings" && (
-                  <div className="space-y-8">
-                    <Section
-                      title="تصویر شاخص"
-                      description="تصویر اصلی مقاله و اطلاعات دسترس‌پذیری آن."
-                    >
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Featured Image URL">
-                          <input
-                            type="url"
-                            value={form.featured_image}
-                            onChange={(event) =>
-                              setField("featured_image", event.target.value)
+                        {form.featured_image && (
+                          <img
+                            src={form.featured_image}
+                            alt={
+                              form.meta.featured_image_alt ||
+                              form.title ||
+                              "Featured image"
                             }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                            dir="ltr"
+                            className="h-64 w-full rounded-xl border border-slate-200 object-cover"
                           />
-                        </Field>
+                        )}
+                      </Section>
 
-                        <Field label="آپلود تصویر">
-                          <label className="flex cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50">
-                            {uploadingImage
-                              ? "در حال آپلود..."
-                              : "انتخاب تصویر"}
+                      <Section title="Schema.org">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="Schema Type">
+                            <select
+                              value={form.meta.schema_type}
+                              onChange={(event) =>
+                                setMeta(
+                                  "schema_type",
+                                  event.target.value as SchemaType,
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            >
+                              <option value="BlogPosting">BlogPosting</option>
+                              <option value="Article">Article</option>
+                              <option value="TechArticle">TechArticle</option>
+                              <option value="NewsArticle">NewsArticle</option>
+                            </select>
+                          </Field>
+
+                          <Field label="Breadcrumb Title">
                             <input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={handleFeaturedImageUpload}
+                              value={form.meta.breadcrumb_title}
+                              onChange={(event) =>
+                                setMeta("breadcrumb_title", event.target.value)
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
                             />
-                          </label>
-                        </Field>
-                      </div>
+                          </Field>
+                        </div>
 
-                      <Field label="Featured Image Alt">
-                        <input
-                          value={form.meta.featured_image_alt}
-                          onChange={(event) =>
-                            setMeta("featured_image_alt", event.target.value)
-                          }
-                          placeholder="مثلاً: آموزش Laravel 13"
-                          className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                        />
-                      </Field>
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="Author Name">
+                            <input
+                              value={form.meta.author_name}
+                              onChange={(event) =>
+                                setMeta("author_name", event.target.value)
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            />
+                          </Field>
 
-                      <Field label="Caption">
-                        <input
-                          value={form.meta.featured_image_caption}
-                          onChange={(event) =>
-                            setMeta(
-                              "featured_image_caption",
-                              event.target.value,
-                            )
-                          }
-                          className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                        />
-                      </Field>
+                          <Field label="Author URL">
+                            <input
+                              type="url"
+                              value={form.meta.author_url}
+                              onChange={(event) =>
+                                setMeta("author_url", event.target.value)
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                              dir="ltr"
+                            />
+                          </Field>
+                        </div>
+                      </Section>
 
-                      {form.featured_image && (
-                        <img
-                          src={form.featured_image}
-                          alt={
-                            form.meta.featured_image_alt ||
-                            form.title ||
-                            "Featured image"
-                          }
-                          className="h-64 w-full rounded-xl border border-slate-200 object-cover"
-                        />
-                      )}
-                    </Section>
+                      <Section
+                        title="Sitemap"
+                        description="تنظیمات editorial برای مدیریت sitemap."
+                      >
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          <Field label="Priority">
+                            <input
+                              type="number"
+                              min={0}
+                              max={1}
+                              step={0.1}
+                              value={form.meta.sitemap_priority}
+                              onChange={(event) =>
+                                setMeta(
+                                  "sitemap_priority",
+                                  clamp(Number(event.target.value), 0, 1),
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            />
+                          </Field>
 
-                    <Section title="Schema.org">
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Schema Type">
-                          <select
-                            value={form.meta.schema_type}
-                            onChange={(event) =>
-                              setMeta(
-                                "schema_type",
-                                event.target.value as SchemaType,
-                              )
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          >
-                            <option value="BlogPosting">BlogPosting</option>
-                            <option value="Article">Article</option>
-                            <option value="TechArticle">TechArticle</option>
-                            <option value="NewsArticle">NewsArticle</option>
-                          </select>
-                        </Field>
+                          <Field label="Change Frequency">
+                            <select
+                              value={form.meta.sitemap_change_frequency}
+                              onChange={(event) =>
+                                setMeta(
+                                  "sitemap_change_frequency",
+                                  event.target
+                                    .value as SeoMeta["sitemap_change_frequency"],
+                                )
+                              }
+                              className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                            >
+                              <option value="always">always</option>
+                              <option value="hourly">hourly</option>
+                              <option value="daily">daily</option>
+                              <option value="weekly">weekly</option>
+                              <option value="monthly">monthly</option>
+                              <option value="yearly">yearly</option>
+                              <option value="never">never</option>
+                            </select>
+                          </Field>
+                        </div>
+                      </Section>
 
-                        <Field label="Breadcrumb Title">
+                      <Section title="Meta Keywords">
+                        <Field label="Meta Keywords" hint="اختیاری / legacy">
                           <input
-                            value={form.meta.breadcrumb_title}
+                            value={form.meta.meta_keywords}
                             onChange={(event) =>
-                              setMeta("breadcrumb_title", event.target.value)
+                              setMeta("meta_keywords", event.target.value)
                             }
+                            placeholder="Laravel, PHP, Backend"
                             className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
                           />
+                          <p className="mt-1 text-xs leading-5 text-slate-400">
+                            این فیلد برای سازگاری با CMS نگه داشته شده و نباید
+                            معیار اصلی SEO شما باشد.
+                          </p>
                         </Field>
-                      </div>
-
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Author Name">
-                          <input
-                            value={form.meta.author_name}
-                            onChange={(event) =>
-                              setMeta("author_name", event.target.value)
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          />
-                        </Field>
-
-                        <Field label="Author URL">
-                          <input
-                            type="url"
-                            value={form.meta.author_url}
-                            onChange={(event) =>
-                              setMeta("author_url", event.target.value)
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                            dir="ltr"
-                          />
-                        </Field>
-                      </div>
-                    </Section>
-
-                    <Section
-                      title="Sitemap"
-                      description="تنظیمات editorial برای مدیریت sitemap."
-                    >
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <Field label="Priority">
-                          <input
-                            type="number"
-                            min={0}
-                            max={1}
-                            step={0.1}
-                            value={form.meta.sitemap_priority}
-                            onChange={(event) =>
-                              setMeta(
-                                "sitemap_priority",
-                                clamp(Number(event.target.value), 0, 1),
-                              )
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          />
-                        </Field>
-
-                        <Field label="Change Frequency">
-                          <select
-                            value={form.meta.sitemap_change_frequency}
-                            onChange={(event) =>
-                              setMeta(
-                                "sitemap_change_frequency",
-                                event.target
-                                  .value as SeoMeta["sitemap_change_frequency"],
-                              )
-                            }
-                            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                          >
-                            <option value="always">always</option>
-                            <option value="hourly">hourly</option>
-                            <option value="daily">daily</option>
-                            <option value="weekly">weekly</option>
-                            <option value="monthly">monthly</option>
-                            <option value="yearly">yearly</option>
-                            <option value="never">never</option>
-                          </select>
-                        </Field>
-                      </div>
-                    </Section>
-
-                    <Section title="Meta Keywords">
-                      <Field label="Meta Keywords" hint="اختیاری / legacy">
-                        <input
-                          value={form.meta.meta_keywords}
-                          onChange={(event) =>
-                            setMeta("meta_keywords", event.target.value)
-                          }
-                          placeholder="Laravel, PHP, Backend"
-                          className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                        />
-                        <p className="mt-1 text-xs leading-5 text-slate-400">
-                          این فیلد برای سازگاری با CMS نگه داشته شده و نباید
-                          معیار اصلی SEO شما باشد.
-                        </p>
-                      </Field>
-                    </Section>
-                  </div>
-                )}
-              </div>
-            </section>
-          </main>
-
-          <aside className="space-y-6">
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-semibold text-slate-800">وضعیت SEO</h3>
-                <span
-                  className={`text-xl font-bold ${getStatusClass(seoScore)}`}
-                >
-                  {seoScore}
-                </span>
-              </div>
-
-              <div className="h-2 overflow-hidden rounded-full bg-slate-200">
-                <div
-                  className={`h-full ${
-                    seoScore >= 85
-                      ? "bg-emerald-500"
-                      : seoScore >= 70
-                        ? "bg-blue-500"
-                        : seoScore >= 50
-                          ? "bg-amber-500"
-                          : "bg-red-500"
-                  }`}
-                  style={{
-                    width: `${seoScore}%`,
-                  }}
-                />
-              </div>
-
-              <div className="mt-4 space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">مشکلات مهم</span>
-                  <span className="font-medium text-red-600">
-                    {
-                      seoChecks.filter(
-                        (check) => check.important && !check.passed,
-                      ).length
-                    }
-                  </span>
+                      </Section>
+                    </div>
+                  )}
                 </div>
+              </section>
+            </main>
 
-                <div className="flex justify-between">
-                  <span className="text-slate-500">پیشنهادها</span>
-                  <span className="font-medium text-amber-600">
-                    {
-                      seoChecks.filter(
-                        (check) => !check.important && !check.passed,
-                      ).length
-                    }
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-slate-500">موارد موفق</span>
-                  <span className="font-medium text-emerald-600">
-                    {seoChecks.filter((check) => check.passed).length}
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-4 font-semibold text-slate-800">انتشار</h3>
-
-              <div className="space-y-4">
-                <Field label="وضعیت">
-                  <select
-                    value={form.visibility}
-                    onChange={(event) =>
-                      setField(
-                        "visibility",
-                        event.target.value as PostFormData["visibility"],
-                      )
-                    }
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+            <aside className="space-y-6">
+              <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="font-semibold text-slate-800">وضعیت SEO</h3>
+                  <span
+                    className={`text-xl font-bold ${getStatusClass(seoScore)}`}
                   >
-                    <option value="draft">پیش‌نویس</option>
-                    <option value="general">عمومی</option>
-                    <option value="private">خصوصی</option>
-                    <option value="limited">محدود</option>
-                  </select>
-                </Field>
+                    {seoScore}
+                  </span>
+                </div>
 
-                <Field label="دسته بندی">
-                  <select
-                    value={form.category_id}
-                    onChange={(event) =>
-                      setField(
-                        "category_id",
-                        event.target.value as PostFormData["category_id"],
-                      )
-                    }
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                  >
-                    <option value="">دسته بندی را انتخاب کنید</option>
-                    {categories &&
-                      categories.length > 0 &&
-                      categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.title}
-                        </option>
-                      ))}
-                  </select>
-                </Field>
-
-                <Field label="تاریخ انتشار">
-                  <input
-                    type="datetime-local"
-                    value={form.published_at}
-                    onChange={(event) =>
-                      setField("published_at", event.target.value)
-                    }
-                    className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
-                  />
-                </Field>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-700">فعال باشد</span>
-                  <button
-                    type="button"
-                    onClick={() => setField("is_active", !form.is_active)}
-                    className={`relative h-6 w-11 rounded-full transition ${
-                      form.is_active ? "bg-indigo-600" : "bg-slate-300"
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className={`h-full ${
+                      seoScore >= 85
+                        ? "bg-emerald-500"
+                        : seoScore >= 70
+                          ? "bg-blue-500"
+                          : seoScore >= 50
+                            ? "bg-amber-500"
+                            : "bg-red-500"
                     }`}
-                    aria-label="فعال بودن مقاله"
-                  >
-                    <span
-                      className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition ${
-                        form.is_active ? "right-0.5" : "right-5"
-                      }`}
-                    />
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-4 font-semibold text-slate-800">
-                پیش‌نمایش گوگل
-              </h3>
-
-              <div className="space-y-1">
-                <p className="line-clamp-2 text-lg leading-snug text-blue-700">
-                  {form.meta.meta_title || form.title || "عنوان مقاله"}
-                </p>
-
-                <p className="truncate text-sm text-emerald-700" dir="ltr">
-                  {form.meta.canonical_url ||
-                    getDefaultCanonical(form.slug || "article-slug")}
-                </p>
-
-                <p className="line-clamp-3 text-sm leading-6 text-slate-600">
-                  {form.meta.meta_description ||
-                    form.excerpt ||
-                    "توضیحات متا اینجا نمایش داده می‌شود..."}
-                </p>
-              </div>
-            </section>
-
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-4 font-semibold text-slate-800">
-                پیش‌نمایش محتوا
-              </h3>
-
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                {(form.meta.og.image || form.featured_image) && (
-                  <img
-                    src={form.meta.og.image || form.featured_image}
-                    alt={
-                      form.meta.og.image_alt ||
-                      form.meta.featured_image_alt ||
-                      form.title
-                    }
-                    className="h-40 w-full object-cover"
+                    style={{
+                      width: `${seoScore}%`,
+                    }}
                   />
-                )}
+                </div>
 
-                <div className="p-4">
-                  <p className="font-semibold text-slate-800">
-                    {form.meta.og.title || form.title || "عنوان مقاله"}
+                <div className="mt-4 space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">مشکلات مهم</span>
+                    <span className="font-medium text-red-600">
+                      {
+                        seoChecks.filter(
+                          (check) => check.important && !check.passed,
+                        ).length
+                      }
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">پیشنهادها</span>
+                    <span className="font-medium text-amber-600">
+                      {
+                        seoChecks.filter(
+                          (check) => !check.important && !check.passed,
+                        ).length
+                      }
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">موارد موفق</span>
+                    <span className="font-medium text-emerald-600">
+                      {seoChecks.filter((check) => check.passed).length}
+                    </span>
+                  </div>
+                </div>
+              </section>
+
+              <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-4 font-semibold text-slate-800">انتشار</h3>
+
+                <div className="space-y-4">
+                  <Field label="وضعیت">
+                    <select
+                      value={form.visibility}
+                      onChange={(event) =>
+                        setField(
+                          "visibility",
+                          event.target.value as PostFormData["visibility"],
+                        )
+                      }
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                    >
+                      <option value="draft">پیش‌نویس</option>
+                      <option value="general">عمومی</option>
+                      <option value="private">خصوصی</option>
+                      <option value="limited">محدود</option>
+                    </select>
+                  </Field>
+
+                  <Field label="دسته بندی">
+                    <select
+                      value={form.category_id}
+                      onChange={(event) =>
+                        setField(
+                          "category_id",
+                          event.target.value as PostFormData["category_id"],
+                        )
+                      }
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                    >
+                      <option value="">دسته بندی را انتخاب کنید</option>
+                      {categories &&
+                        categories.length > 0 &&
+                        categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.title}
+                          </option>
+                        ))}
+                    </select>
+                  </Field>
+
+                  <Field label="تاریخ انتشار">
+                    <input
+                      type="datetime-local"
+                      value={form.published_at}
+                      onChange={(event) =>
+                        setField("published_at", event.target.value)
+                      }
+                      className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
+                    />
+                  </Field>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-700">فعال باشد</span>
+                    <button
+                      type="button"
+                      onClick={() => setField("is_active", !form.is_active)}
+                      className={`relative h-6 w-11 rounded-full transition ${
+                        form.is_active ? "bg-indigo-600" : "bg-slate-300"
+                      }`}
+                      aria-label="فعال بودن مقاله"
+                    >
+                      <span
+                        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition ${
+                          form.is_active ? "right-0.5" : "right-5"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-4 font-semibold text-slate-800">
+                  پیش‌نمایش گوگل
+                </h3>
+
+                <div className="space-y-1">
+                  <p className="line-clamp-2 text-lg leading-snug text-blue-700">
+                    {form.meta.meta_title || form.title || "عنوان مقاله"}
                   </p>
-                  <p className="mt-1 line-clamp-3 text-xs leading-5 text-slate-500">
-                    {form.meta.og.description ||
+
+                  <p className="truncate text-sm text-emerald-700" dir="ltr">
+                    {form.meta.canonical_url ||
+                      getDefaultCanonical(form.slug || "article-slug")}
+                  </p>
+
+                  <p className="line-clamp-3 text-sm leading-6 text-slate-600">
+                    {form.meta.meta_description ||
                       form.excerpt ||
-                      "توضیحات مقاله"}
+                      "توضیحات متا اینجا نمایش داده می‌شود..."}
                   </p>
                 </div>
-              </div>
-            </section>
+              </section>
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-4 font-semibold text-slate-800">آمار مقاله</h3>
+              <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-4 font-semibold text-slate-800">
+                  پیش‌نمایش محتوا
+                </h3>
 
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">تعداد کلمات</span>
-                  <b>{form.meta.word_count}</b>
+                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                  {(form.meta.og.image || form.featured_image) && (
+                    <img
+                      src={form.meta.og.image || form.featured_image}
+                      alt={
+                        form.meta.og.image_alt ||
+                        form.meta.featured_image_alt ||
+                        form.title
+                      }
+                      className="h-40 w-full object-cover"
+                    />
+                  )}
+
+                  <div className="p-4">
+                    <p className="font-semibold text-slate-800">
+                      {form.meta.og.title || form.title || "عنوان مقاله"}
+                    </p>
+                    <p className="mt-1 line-clamp-3 text-xs leading-5 text-slate-500">
+                      {form.meta.og.description ||
+                        form.excerpt ||
+                        "توضیحات مقاله"}
+                    </p>
+                  </div>
                 </div>
+              </section>
 
-                <div className="flex justify-between">
-                  <span className="text-slate-500">زمان مطالعه</span>
-                  <b>{form.meta.reading_time} دقیقه</b>
-                </div>
+              <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-4 font-semibold text-slate-800">
+                  آمار مقاله
+                </h3>
 
-                <div className="flex justify-between">
-                  <span className="text-slate-500">لینک داخلی</span>
-                  <b>{internalLinks.length}</b>
-                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">تعداد کلمات</span>
+                    <b>{form.meta.word_count}</b>
+                  </div>
 
-                <div className="flex justify-between">
-                  <span className="text-slate-500">لینک خارجی</span>
-                  <b>{externalLinks.length}</b>
-                </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">زمان مطالعه</span>
+                    <b>{form.meta.reading_time} دقیقه</b>
+                  </div>
 
-                <div className="flex justify-between">
-                  <span className="text-slate-500">تصاویر</span>
-                  <b>{images.length}</b>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">لینک داخلی</span>
+                    <b>{internalLinks.length}</b>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">لینک خارجی</span>
+                    <b>{externalLinks.length}</b>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">تصاویر</span>
+                    <b>{images.length}</b>
+                  </div>
                 </div>
-              </div>
-            </section>
-          </aside>
-        </div>
-      </form>
-    </div>
+              </section>
+            </aside>
+          </div>
+        </form>
+      </div>
+    </PanelLayout>
   );
 }
 
