@@ -17,7 +17,7 @@ class PostService
         unset($data['tag']);
         return !empty($meta) ? $meta : null;
     }
-
+ 
     public function create(array $data, UploadedFile|null $featuredImage = null): Post
     {
         return DB::transaction(function () use ($data, $featuredImage) {

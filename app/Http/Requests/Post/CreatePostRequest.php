@@ -82,9 +82,9 @@ class CreatePostRequest extends FormRequest
 
             'featured_image' => [
                 'nullable',
-                'image',
-                'mimes:jpeg,jpg,png,webp,avif',
-                'max:5120',
+                'string',
+                'url',
+                'max:2048',
             ],
         ];
     }
