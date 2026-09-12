@@ -39,6 +39,11 @@ Route::middleware('resolve')->group(function () {
             Route::get('/posts/list', function () {
                 return Inertia::render('panel/posts/list');
             });
+
+
+            Route::get('/users', function () {
+                return Inertia::render('panel/users/index');
+            });
         });
 
     Route::middleware('guest')->group(function () {
