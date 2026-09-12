@@ -1,5 +1,6 @@
 import { useToast } from "@/components/ui/Toastalert";
 import AppLayout from "@/layouts/AppLayout";
+import { cn } from "@/lib/utils";
 import { Link, router } from "@inertiajs/react";
 import {
   ArrowRight,
@@ -85,7 +86,9 @@ interface PostDetail {
   author_name: string;
   created_at: string;
   updated_at: string;
-  meta: SeoMeta;
+  meta: {
+    seo: SeoMeta;
+  };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -204,79 +207,33 @@ function SectionCard({
 /* -------------------------------------------------------------------------- */
 
 interface Props {
-  post: any;
+  post: PostDetail | null;
   /** اگر از Inertia prop می‌آید */
   //   id?: number;
 }
 
-export default function PostDetailPage({ post: DataPost }: Props) {
-  console.log(DataPost);
+export default function PostDetailPage({ post: postData }: Props) {
+  console.log({ postData });
   const toast = useToast();
 
-  // اگر از route param می‌آید (مثلاً /panel/posts/:id)
-  //   const postId =
-  //     propId ||
-  //     (typeof window !== "undefined"
-  //       ? Number(window.location.pathname.split("/").pop())
-  //       : 0);
-  const postId = 2;
-
-  const [post, setPost] = useState<PostDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [post, setPost] = useState(postData);
   const [activeTab, setActiveTab] = useState<
     "content" | "seo" | "social" | "meta"
   >("content");
   const [deleting, setDeleting] = useState(false);
   const [toggling, setToggling] = useState(false);
 
-  /* ---------------------------- Fetch ----------------------------------- */
-
-  useEffect(() => {
-    if (!postId) return;
-
-    const fetchPost = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/v1/posts/${postId}`, {
-          headers: { Accept: "application/json" },
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          throw new Error("مقاله یافت نشد یا خطایی رخ داد.");
-        }
-
-        const data = await res.json();
-
-        // ساختار پاسخ را با بک‌اند خودت تطبیق بده
-        if (data?.success && data.data) {
-          setPost(data.data);
-        } else if (data?.id) {
-          setPost(data);
-        } else {
-          throw new Error(data?.message || "داده نامعتبر از سرور");
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error(err instanceof Error ? err.message : "خطا در دریافت مقاله");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPost();
-  }, [postId]);
-
   /* ---------------------------- Derived --------------------------------- */
 
-  const seoScore = post?.meta?.seo_score ?? 0;
+  const seoScore = post?.meta?.seo?.seo_score ?? 0;
 
   const googlePreviewTitle =
-    post?.meta?.meta_title || post?.title || "عنوان مقاله";
+    post?.meta?.seo?.meta_title || post?.title || "عنوان مقاله";
   const googlePreviewDesc =
-    post?.meta?.meta_description || post?.excerpt || "توضیحات متا...";
+    post?.meta?.seo?.meta_description || post?.excerpt || "توضیحات متا...";
   const googlePreviewUrl =
-    post?.meta?.canonical_url ||
+    post?.meta?.seo?.canonical_url ||
     (post?.slug ? `https://example.com/blog/${post.slug}` : "");
 
   /* ---------------------------- Actions --------------------------------- */
@@ -338,19 +295,19 @@ export default function PostDetailPage({ post: DataPost }: Props) {
 
   /* ---------------------------- Loading / Empty ------------------------- */
 
-  if (loading) {
-    return (
-      <div
-        dir="rtl"
-        className="min-h-screen bg-slate-100 flex items-center justify-center"
-      >
-        <div className="flex flex-col items-center gap-3 text-slate-500">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-          <p className="text-sm">در حال بارگذاری مقاله...</p>
-        </div>
-      </div>
-    );
-  }
+  //   if (loading) {
+  //     return (
+  //       <div
+  //         dir="rtl"
+  //         className="min-h-screen bg-slate-100 flex items-center justify-center"
+  //       >
+  //         <div className="flex flex-col items-center gap-3 text-slate-500">
+  //           <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+  //           <p className="text-sm">در حال بارگذاری مقاله...</p>
+  //         </div>
+  //       </div>
+  //     );
+  //   }
 
   if (!post) {
     return (
@@ -400,7 +357,7 @@ export default function PostDetailPage({ post: DataPost }: Props) {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 min-w-0">
             <Link
-              href="/panel/posts"
+              href="/panel/posts/list"
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-800"
               title="بازگشت"
             >
@@ -412,9 +369,10 @@ export default function PostDetailPage({ post: DataPost }: Props) {
               </h1>
               <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                 <span
-                  className={`inline-flex rounded-full border px-2 py-0.5 font-medium ${getVisibilityBadge(
-                    post.visibility,
-                  )}`}
+                  className={cn(
+                    "inline-flex rounded-full border px-2 py-0.5 font-medium",
+                    getVisibilityBadge(post.visibility),
+                  )}
                 >
                   {getVisibilityLabel(post.visibility)}
                 </span>
@@ -465,11 +423,12 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex min-w-fit flex-1 items-center justify-center gap-2 px-4 py-3.5 text-sm font-medium transition ${
+                    className={cn(
+                      "flex min-w-fit flex-1 items-center justify-center gap-2 px-4 py-3.5 text-sm font-medium transition cursor-pointer",
                       activeTab === tab.id
                         ? "border-b-2 border-indigo-600 bg-indigo-50/60 text-indigo-700"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                    }`}
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",
+                    )}
                   >
                     {tab.icon}
                     {tab.label}
@@ -485,12 +444,12 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                       <div className="overflow-hidden rounded-xl border border-slate-200">
                         <img
                           src={post.featured_image}
-                          alt={post.meta?.featured_image_alt || post.title}
+                          alt={post.meta?.seo?.featured_image_alt || post.title}
                           className="h-56 w-full object-cover sm:h-72"
                         />
-                        {post.meta?.featured_image_caption && (
+                        {post.meta?.seo?.featured_image_caption && (
                           <p className="bg-slate-50 px-4 py-2 text-center text-xs text-slate-500">
-                            {post.meta.featured_image_caption}
+                            {post.meta?.seo?.featured_image_caption}
                           </p>
                         )}
                       </div>
@@ -587,27 +546,27 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                     <div className="grid gap-4 sm:grid-cols-2">
                       <MetaRow
                         label="Meta Title"
-                        value={post.meta?.meta_title}
+                        value={post.meta?.seo?.meta_title}
                       />
                       <MetaRow
                         label="Focus Keyword"
-                        value={post.meta?.focus_keyword || "—"}
+                        value={post.meta?.seo?.focus_keyword || "—"}
                       />
                     </div>
                     <MetaRow
                       label="Meta Description"
-                      value={post.meta?.meta_description}
+                      value={post.meta?.seo?.meta_description}
                     />
                     <MetaRow
                       label="Canonical URL"
-                      value={post.meta?.canonical_url}
+                      value={post.meta?.seo?.canonical_url}
                       dir="ltr"
                     />
                     <MetaRow
                       label="کلمات کلیدی فرعی"
                       value={
-                        post.meta?.focus_keywords?.length
-                          ? post.meta.focus_keywords.join("، ")
+                        post.meta?.seo?.focus_keywords?.length
+                          ? post.meta?.seo?.focus_keywords.join("، ")
                           : "—"
                       }
                     />
@@ -621,13 +580,13 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                         <div>
                           <span className="text-xs text-slate-400">Index</span>
                           <p className="font-medium">
-                            {post.meta?.robots?.index || "—"}
+                            {post.meta?.seo?.robots?.index || "—"}
                           </p>
                         </div>
                         <div>
                           <span className="text-xs text-slate-400">Follow</span>
                           <p className="font-medium">
-                            {post.meta?.robots?.follow || "—"}
+                            {post.meta?.seo?.robots?.follow || "—"}
                           </p>
                         </div>
                         <div>
@@ -635,7 +594,7 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                             Max Snippet
                           </span>
                           <p className="font-medium">
-                            {post.meta?.robots?.max_snippet ?? "—"}
+                            {post.meta?.seo?.robots?.max_snippet ?? "—"}
                           </p>
                         </div>
                         <div>
@@ -643,7 +602,7 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                             Image Preview
                           </span>
                           <p className="font-medium">
-                            {post.meta?.robots?.max_image_preview || "—"}
+                            {post.meta?.seo?.robots?.max_image_preview || "—"}
                           </p>
                         </div>
                       </div>
@@ -660,24 +619,26 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                         Open Graph
                       </p>
                       <div className="overflow-hidden rounded-xl border border-slate-200">
-                        {(post.meta?.og?.image || post.featured_image) && (
+                        {(post.meta?.seo?.og?.image || post.featured_image) && (
                           <img
                             src={
-                              post.meta?.og?.image || post.featured_image || ""
+                              post.meta?.seo?.og?.image ||
+                              post.featured_image ||
+                              ""
                             }
-                            alt={post.meta?.og?.image_alt || post.title}
+                            alt={post.meta?.seo?.og?.image_alt || post.title}
                             className="h-48 w-full object-cover"
                           />
                         )}
                         <div className="p-4">
                           <p className="font-semibold text-slate-800">
-                            {post.meta?.og?.title || post.title}
+                            {post.meta?.seo?.og?.title || post.title}
                           </p>
                           <p className="mt-1 line-clamp-2 text-sm text-slate-500">
-                            {post.meta?.og?.description || post.excerpt}
+                            {post.meta?.seo?.og?.description || post.excerpt}
                           </p>
                           <p className="mt-2 text-xs text-slate-400">
-                            type: {post.meta?.og?.type || "article"}
+                            type: {post.meta?.seo?.og?.type || "article"}
                           </p>
                         </div>
                       </div>
@@ -689,27 +650,32 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                         Twitter / X Card
                       </p>
                       <div className="overflow-hidden rounded-xl border border-slate-200">
-                        {(post.meta?.twitter?.image || post.featured_image) && (
+                        {(post.meta?.seo?.twitter?.image ||
+                          post.featured_image) && (
                           <img
                             src={
-                              post.meta?.twitter?.image ||
+                              post.meta?.seo?.twitter?.image ||
                               post.featured_image ||
                               ""
                             }
-                            alt={post.meta?.twitter?.image_alt || post.title}
+                            alt={
+                              post.meta?.seo?.twitter?.image_alt || post.title
+                            }
                             className="h-48 w-full object-cover"
                           />
                         )}
                         <div className="p-4">
                           <p className="font-semibold text-slate-800">
-                            {post.meta?.twitter?.title || post.title}
+                            {post.meta?.seo?.twitter?.title || post.title}
                           </p>
                           <p className="mt-1 line-clamp-2 text-sm text-slate-500">
-                            {post.meta?.twitter?.description || post.excerpt}
+                            {post.meta?.seo?.twitter?.description ||
+                              post.excerpt}
                           </p>
                           <p className="mt-2 text-xs text-slate-400">
                             card:{" "}
-                            {post.meta?.twitter?.card || "summary_large_image"}
+                            {post.meta?.seo?.twitter?.card ||
+                              "summary_large_image"}
                           </p>
                         </div>
                       </div>
@@ -722,40 +688,40 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                   <div className="space-y-1">
                     <MetaRow
                       label="Schema Type"
-                      value={post.meta?.schema_type}
+                      value={post.meta?.seo?.schema_type}
                     />
                     <MetaRow
                       label="Breadcrumb Title"
-                      value={post.meta?.breadcrumb_title}
+                      value={post.meta?.seo?.breadcrumb_title}
                     />
                     <MetaRow
                       label="Author Name"
-                      value={post.meta?.author_name || post.author_name}
+                      value={post.meta?.seo?.author_name || post.author_name}
                     />
                     <MetaRow
                       label="Author URL"
-                      value={post.meta?.author_url}
+                      value={post.meta?.seo?.author_url}
                       dir="ltr"
                     />
                     <MetaRow
                       label="Featured Image Alt"
-                      value={post.meta?.featured_image_alt}
+                      value={post.meta?.seo?.featured_image_alt}
                     />
                     <MetaRow
                       label="Featured Image Caption"
-                      value={post.meta?.featured_image_caption}
+                      value={post.meta?.seo?.featured_image_caption}
                     />
                     <MetaRow
                       label="Sitemap Priority"
-                      value={post.meta?.sitemap_priority}
+                      value={post.meta?.seo?.sitemap_priority}
                     />
                     <MetaRow
                       label="Change Frequency"
-                      value={post.meta?.sitemap_change_frequency}
+                      value={post.meta?.seo?.sitemap_change_frequency}
                     />
                     <MetaRow
                       label="Meta Keywords (legacy)"
-                      value={post.meta?.meta_keywords}
+                      value={post.meta?.seo?.meta_keywords}
                     />
                   </div>
                 )}
@@ -892,7 +858,7 @@ export default function PostDetailPage({ post: DataPost }: Props) {
                 <div className="flex justify-between">
                   <span className="text-slate-500">نویسنده</span>
                   <span className="font-medium text-slate-800">
-                    {post.author_name || post.meta?.author_name || "—"}
+                    {post.author_name || post.meta?.seo?.author_name || "—"}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -912,13 +878,13 @@ export default function PostDetailPage({ post: DataPost }: Props) {
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-xl bg-slate-50 p-3 text-center">
                   <p className="text-lg font-bold text-slate-800">
-                    {post.meta?.word_count ?? 0}
+                    {post.meta?.seo?.word_count ?? 0}
                   </p>
                   <p className="text-[11px] text-slate-500">کلمه</p>
                 </div>
                 <div className="rounded-xl bg-slate-50 p-3 text-center">
                   <p className="text-lg font-bold text-slate-800">
-                    {post.meta?.reading_time ?? 0}
+                    {post.meta?.seo?.reading_time ?? 0}
                   </p>
                   <p className="text-[11px] text-slate-500">دقیقه مطالعه</p>
                 </div>
@@ -933,12 +899,12 @@ export default function PostDetailPage({ post: DataPost }: Props) {
               >
                 <img
                   src={post.featured_image}
-                  alt={post.meta?.featured_image_alt || post.title}
+                  alt={post.meta?.seo?.featured_image_alt || post.title}
                   className="w-full rounded-xl object-cover aspect-video"
                 />
-                {post.meta?.featured_image_alt && (
+                {post.meta?.seo?.featured_image_alt && (
                   <p className="mt-2 text-xs text-slate-500">
-                    Alt: {post.meta.featured_image_alt}
+                    Alt: {post.meta?.seo?.featured_image_alt}
                   </p>
                 )}
               </SectionCard>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\PostController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -34,9 +35,7 @@ Route::middleware('resolve')->group(function () {
             Route::get('/posts/create', function () {
                 return Inertia::render('panel/posts/create');
             });
-            Route::get('/posts/show/{post}', function (Post $post) {
-                return Inertia::render('panel/posts/details', ['post' => $post]);
-            });
+            Route::get('/posts/{post}/show', [PostController::class, 'detailsPage']);
             Route::get('/posts/list', function () {
                 return Inertia::render('panel/posts/list');
             });

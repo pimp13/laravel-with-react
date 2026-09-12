@@ -801,7 +801,7 @@ export default function PostsListPage() {
                               ویرایش
                             </button>
                             <Link
-                              href={`/panel/posts/show/${post.id}`}
+                              href={`/panel/posts/${post.id}/show`}
                               title="مشاهده جزئیات"
                               className="rounded-lg px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
                             >
