@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use Inertia\Response;
 use OpenApi\Attributes as OA;
 
 class PostController extends Controller
@@ -203,5 +205,15 @@ class PostController extends Controller
             'id' => (int) $post->id,
             'is_active' => (bool) $post->is_active
         ], message: 'وضعیت پست با موفقیت تغییر کرد');
+    }
+
+
+    public function detailsPage(Post $post): Response
+    {
+        $post->load(['category', 'author']);
+        $payload = [
+            'post' => $post,
+        ];
+        return Inertia::render('panel/posts/details', $payload);
     }
 }
