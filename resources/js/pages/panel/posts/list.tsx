@@ -1,6 +1,7 @@
 import { useToast } from "@/components/ui/Toastalert";
 import AppLayout from "@/layouts/AppLayout";
 import { Link } from "@inertiajs/react";
+import { XIcon } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 
 /* -------------------------------------------------------------------------- */
@@ -386,10 +387,45 @@ export default function PostsListPage() {
     setSelectedIds((prev) => prev.filter((x) => x !== id));
   };
 
-  const handleToggleActive = (id: number) => {
-    setPosts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, is_active: !p.is_active } : p)),
-    );
+  const handleToggleActive = async (post: Post) => {
+    const newStatus = !post.is_active;
+
+    try {
+      const res = await fetch(`/api/v1/posts/${post.id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          is_active: newStatus,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.message || "تغییر وضعیت پست ناموفق بود.");
+      }
+
+      setPostsList((prev) =>
+        prev.map((p) =>
+          p.id === post.id
+            ? {
+                ...p,
+                is_active: data.data.is_active,
+              }
+            : p,
+        ),
+      );
+
+      toast.success(data.message || "وضعیت پست تغییر کرد.");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "خطا در تغییر وضعیت پست",
+      );
+    }
   };
 
   const handleChangeStatus = (id: number, visibility: Visibility) => {
@@ -713,7 +749,9 @@ export default function PostsListPage() {
                       </td>
 
                       <td className="px-4 py-3 text-slate-600">
-                        {post.category_title}
+                        {post.category_title || (
+                          <XIcon className="size-5 text-rose-500" />
+                        )}
                       </td>
 
                       <td className="px-4 py-3">
@@ -767,7 +805,7 @@ export default function PostsListPage() {
                             title={
                               post.is_active ? "غیرفعال کردن" : "فعال کردن"
                             }
-                            onClick={() => handleToggleActive(post.id)}
+                            onClick={() => handleToggleActive(post)}
                             className="rounded-lg px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-100"
                           >
                             {post.is_active ? "غیرفعال" : "فعال"}
