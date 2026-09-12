@@ -10,6 +10,7 @@ use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use OpenApi\Attributes as OA;
@@ -35,7 +36,7 @@ class PostController extends Controller
     )]
     public function index()
     {
-        $posts = Post::with(['category', 'author'])->get();
+        $posts = Post::with(['category', 'author'])->orderByDesc('created_at')->get();
         return ApiResponse::success(data: $posts);
     }
 
@@ -56,6 +57,7 @@ class PostController extends Controller
     public function store(CreatePostRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $data['user_id'] = Auth::user()->id;
         $result = $this->postService->create($data, $request->file('featured_image'));
 
         return ApiResponse::success($result, 'پست شما باموفقیت ثبت شد');
