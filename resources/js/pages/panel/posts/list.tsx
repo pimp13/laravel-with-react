@@ -1,6 +1,7 @@
+import { useToast } from "@/components/ui/Toastalert";
 import AppLayout from "@/layouts/AppLayout";
 import { Link } from "@inertiajs/react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                      */
@@ -39,7 +40,7 @@ const MOCK_POSTS: Post[] = [
     excerpt:
       "در این مقاله به صورت جامع Laravel 13 را از صفر تا صد بررسی می‌کنیم.",
     featured_image:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=250&fit=crop",
+      "http://localhost:8000/storage/posts/images/fb5868c2-c050-4e4f-9b28-798e07bb8fc3.png",
     category_id: 1,
     category_title: "برنامه‌نویسی",
     visibility: "general",
@@ -58,7 +59,7 @@ const MOCK_POSTS: Post[] = [
     slug: "seo-optimization-react-nextjs",
     excerpt: "راهنمای عملی برای بهبود سئو اپلیکیشن‌های React و Next.js.",
     featured_image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop",
+      "http://localhost:8000/storage/posts/images/fb5868c2-c050-4e4f-9b28-798e07bb8fc3.png",
     category_id: 2,
     category_title: "سئو",
     visibility: "general",
@@ -95,7 +96,7 @@ const MOCK_POSTS: Post[] = [
     slug: "scalable-systems-nestjs",
     excerpt: "معماری و الگوهای طراحی برای ساخت بک‌اند حرفه‌ای با NestJS.",
     featured_image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=250&fit=crop",
+      "http://localhost:8000/storage/posts/images/fb5868c2-c050-4e4f-9b28-798e07bb8fc3.png",
     category_id: 1,
     category_title: "برنامه‌نویسی",
     visibility: "private",
@@ -113,8 +114,7 @@ const MOCK_POSTS: Post[] = [
     title: "راهنمای کامل Tailwind CSS برای طراحی سریع",
     slug: "tailwind-css-complete-guide",
     excerpt: "چگونه با Tailwind CSS رابط کاربری سریع و تمیز بسازیم.",
-    featured_image:
-      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=400&h=250&fit=crop",
+    featured_image: "",
     category_id: 3,
     category_title: "فرانت‌اند",
     visibility: "limited",
@@ -243,6 +243,7 @@ function StatCard({
 /* -------------------------------------------------------------------------- */
 
 export default function PostsListPage() {
+  const toast = useToast();
   const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<Visibility | "all">("all");
@@ -254,6 +255,22 @@ export default function PostsListPage() {
     "updated_at",
   );
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+  /* ---------------------------- Fetch Post Lists ----------------------------- */
+  const [postsList, setPostsList] = useState();
+  useEffect(() => {
+    fetch("/api/v1/posts")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success) {
+          setPostsList(data.data);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.message || "خطا در برقراری با سرور");
+      });
+  }, []);
+  console.log({ postsList });
 
   /* ---------------------------- Derived data ----------------------------- */
 
