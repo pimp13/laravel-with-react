@@ -27,6 +27,8 @@ import {
   SITE_URL,
   stripHtml,
 } from "@/lib/helpers";
+import AppLayout from "@/layouts/AppLayout";
+import { useToast } from "@/components/ui/Toastalert";
 
 /**
  * WordPress / Yoast / RankMath-style post editor.
@@ -318,6 +320,7 @@ function Counter({
 /* -------------------------------------------------------------------------- */
 
 export default function CreatePostPage() {
+  const toast = useToast();
   const [form, setForm] = useState<PostFormData>(INITIAL_FORM);
   const [activeTab, setActiveTab] = useState<
     "content" | "seo" | "social" | "settings"
@@ -904,70 +907,109 @@ export default function CreatePostPage() {
     }
   }, [editor]);
 
-  // const handleEditorImageUpload = async (
-  //   event: React.ChangeEvent<HTMLInputElement>,
-  // ) => {
-  //   const file = event.target.files?.[0];
-  //   event.target.value = "";
-
-  //   if (!file || !editor) return;
-
-  //   setUploadingEditorImage(true);
-
-  //   try {
-  //     const result = await (api as Api).uploadImage(file);
-  //     const url =
-  //       typeof result === "string" ? result : result.url || result.path;
-
-  //     if (!url) {
-  //       throw new Error("URL تصویر از API دریافت نشد.");
-  //     }
-
-  //     editor
-  //       .chain()
-  //       .focus()
-  //       .setImage({
-  //         src: url,
-  //       })
-  //       .run();
-  //   } catch (error) {
-  //     console.error(error);
-  //     window.alert("آپلود تصویر داخل محتوا انجام نشد.");
-  //   } finally {
-  //     setUploadingEditorImage(false);
-  //   }
-  // };
-
   const handleEditorImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     event.target.value = "";
 
-    if (!file || !editor) return;
+    if (!file) return;
 
-    setUploadingEditorImage(true);
+    if (!file.type.startsWith("image/")) {
+      window.alert("لطفاً یک فایل تصویری انتخاب کنید.");
+      return;
+    }
 
     try {
-      const url = URL.createObjectURL(file);
+      setUploadingImage(true);
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await fetch("/api/v1/posts/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "آپلود تصویر ناموفق بود.");
+      }
+
+      const imageUrl = data?.data?.url;
+
+      if (!imageUrl) {
+        throw new Error("آدرس تصویر از سرور دریافت نشد.");
+      }
 
       editor
         .chain()
         .focus()
         .setImage({
-          src: url,
+          src: imageUrl,
         })
         .run();
     } catch (error) {
       console.error(error);
-      window.alert("نمایش تصویر داخل محتوا انجام نشد.");
+
+      window.alert(
+        error instanceof Error ? error.message : "آپلود تصویر انجام نشد.",
+      );
     } finally {
-      setUploadingEditorImage(false);
+      setUploadingImage(false);
     }
   };
 
   /* ------------------------------ Featured image -------------------------- */
 
+  const handleFeaturedImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      window.alert("لطفاً یک فایل تصویری انتخاب کنید.");
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await fetch("/api/v1/posts/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "آپلود تصویر ناموفق بود.");
+      }
+
+      const imageUrl = data?.data?.url;
+
+      if (!imageUrl) {
+        throw new Error("URL تصویر از Backend دریافت نشد.");
+      }
+
+      setField("featured_image", imageUrl);
+    } catch (error) {
+      console.error(error);
+      window.alert(
+        error instanceof Error ? error.message : "آپلود تصویر شاخص انجام نشد.",
+      );
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+  /*
   const handleFeaturedImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -989,6 +1031,7 @@ export default function CreatePostPage() {
       setUploadingImage(false);
     }
   };
+  */
 
   /* ------------------------------ Submit ---------------------------------- */
 
@@ -1136,9 +1179,9 @@ export default function CreatePostPage() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      console.log("Backend response data:", data);
-
-      window.alert("مقاله فعلاً به‌صورت محلی آماده شد و در کنسول ثبت شد.");
+      if (data?.success)
+        toast.success(data.message || "عملیات موفقیت آمیز بود");
+      else toast.error(data.message || "خطا در برقراری با سرور");
     } catch (error) {
       console.error(error);
       window.alert("ذخیره مقاله انجام نشد.");
@@ -2439,3 +2482,7 @@ export default function CreatePostPage() {
     </div>
   );
 }
+
+CreatePostPage.layout = (page: React.ReactNode) => (
+  <AppLayout>{page}</AppLayout>
+);
