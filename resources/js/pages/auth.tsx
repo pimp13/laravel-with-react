@@ -16,6 +16,7 @@ import { ArrowLeft, Eye, EyeOff, LockKeyhole, Mail, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ToastProvider, useToast } from "@/components/ui/Toastalert";
 import AppLayout from "@/layouts/AppLayout";
+import { useAuth } from "@/contexts/AuthContext";
 
 type AuthMode = "login" | "register";
 
@@ -65,15 +66,25 @@ export default function Auth() {
 
     try {
       if (isLogin) {
-        // TODO:
-        // اتصال به API Login
-        //
-        // await axios.post("/api/auth/login", {
-        //     email: form.email,
-        //     password: form.password,
-        // });
+        const resp = await fetch("/api/v1/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: form.email,
+            password: form.password,
+          }),
+        });
+        const data = await resp.json();
+        if (data?.errors) {
+          toast.error(data?.message || "خطا در اعتبارسنجی...");
+          setErrors(data?.errors);
+          return;
+        }
 
-        console.log("Login", { form });
+        toast.success(data?.message || "عملیات موفقیت آمیز بود");
+        setMode("login");
+        setErrors(null);
+        setForm((prev) => ({ ...prev }));
       } else {
         try {
           const resp = await fetch("/api/v1/auth/register", {
@@ -99,9 +110,12 @@ export default function Auth() {
           setErrors(null);
           setForm((prev) => ({ ...prev }));
         } catch (err: any) {
+          toast.error(err || "خطا در برقراری با سرور");
           console.log("server error := ", err.message);
         }
       }
+    } catch (err: any) {
+      toast.error(err?.message || "خطا در برقراری با سرور");
     } finally {
       setLoading(false);
     }
