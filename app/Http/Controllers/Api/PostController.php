@@ -8,6 +8,8 @@ use App\Http\Requests\Post\CreatePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
 use App\Models\Post;
 use App\Services\PostService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use OpenApi\Attributes as OA;
@@ -51,16 +53,12 @@ class PostController extends Controller
             )
         ]
     )]
-    public function store(CreatePostRequest $request)
+    public function store(CreatePostRequest $request): JsonResponse
     {
         $data = $request->validated();
-        dd($data);
+        $result = $this->postService->create($data, $request->file('featured_image'));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'a new post created successfully',
-            // 'data' => $post
-        ]);
+        return ApiResponse::success($result, 'پست شما باموفقیت ثبت شد');
     }
 
     /**
@@ -87,7 +85,7 @@ class PostController extends Controller
             )
         ]
     )]
-    public function show(Post $post)
+    public function show(Post $post): JsonResponse
     {
         $post->load(['category', 'author']);
         return response()->json([
@@ -99,7 +97,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post): JsonResponse
     {
 
         $bodyData = [
@@ -155,5 +153,35 @@ class PostController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function uploadImage(Request $request): JsonResponse
+    {
+        $request->validate([
+            'image' => [
+                'required',
+                'image',
+                'mimes:jpeg,jpg,png,webp,gif',
+                'max:5120',
+            ],
+        ]);
+
+        $file = $request->file('image');
+
+        $filename = str()->uuid() . '.' . $file->getClientOriginalExtension();
+
+        $path = $file->storeAs(
+            'posts/images',
+            $filename,
+            'public'
+        );
+
+        return ApiResponse::success(
+            message: 'تصویر با موفقیت آپلود شد.',
+            data: [
+                'path' => $path,
+                'url' => asset('storage' . DIRECTORY_SEPARATOR . $path)
+            ],
+        );
     }
 }
