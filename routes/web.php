@@ -18,7 +18,7 @@ Route::middleware('resolve')->group(function () {
         ->prefix('panel')
         ->group(function () {
             Route::get('/', function () {
-                return Inertia::render('panel', [
+                return Inertia::render('panel/index', [
                     'dataTest' => 'Hello this data sending from laravel',
                 ]);
             });

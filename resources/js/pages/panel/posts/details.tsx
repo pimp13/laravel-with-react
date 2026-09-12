@@ -170,7 +170,7 @@ function MetaRow({
     <div className="flex items-start justify-between gap-4 py-2.5 border-b border-slate-100 last:border-0">
       <span className="text-xs text-slate-500 shrink-0">{label}</span>
       <span
-        className="text-sm text-slate-800 text-right break-all"
+        className={cn("text-sm text-slate-800 text-right break-all")}
         dir={dir || "rtl"}
       >
         {value || "—"}
@@ -561,7 +561,7 @@ export default function PostDetailPage({ post: postData }: Props) {
                     />
                     <MetaRow
                       label="Canonical URL"
-                      value={post.meta?.seo?.canonical_url}
+                      value={<pre>{post.meta?.seo?.canonical_url}</pre>}
                       dir="ltr"
                     />
                     <MetaRow
