@@ -44,6 +44,14 @@ interface Category {
   id: number;
   title: string;
   slug: string;
+  meta: {
+    icon: string;
+    description: string;
+  };
+  is_active: boolean;
+  parent_id?: number | null;
+  created_at: string | Date;
+  children_recursive: Category[];
 }
 
 type RobotsIndex = "index" | "noindex";
@@ -320,6 +328,19 @@ export default function CreatePostPage() {
   const [keywordInput, setKeywordInput] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingEditorImage, setUploadingEditorImage] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  /* ------------------------------ Get Categories --------------------------- */
+  useEffect(() => {
+    fetch("/api/v1/categories")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success) {
+          setCategories(data.data);
+        }
+      })
+      .catch(console.log);
+  }, []);
 
   const setField = useCallback(
     <K extends keyof PostFormData>(field: K, value: PostFormData[K]) => {
@@ -2286,9 +2307,14 @@ export default function CreatePostPage() {
                     }
                     className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm"
                   >
-                    <option value="1">دسته بندی تستی اول</option>
-                    <option value="2">دوم</option>
-                    <option value="3">سوم</option>
+                    <option value="">دسته بندی را انتخاب کنید</option>
+                    {categories &&
+                      categories.length > 0 &&
+                      categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.title}
+                        </option>
+                      ))}
                   </select>
                 </Field>
 
