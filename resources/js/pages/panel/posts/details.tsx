@@ -89,6 +89,8 @@ interface PostDetail {
   meta: {
     seo: SeoMeta;
   };
+  author: any;
+  category: any;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -168,7 +170,7 @@ function MetaRow({
     <div className="flex items-start justify-between gap-4 py-2.5 border-b border-slate-100 last:border-0">
       <span className="text-xs text-slate-500 shrink-0">{label}</span>
       <span
-        className="text-sm text-slate-800 text-left break-all"
+        className="text-sm text-slate-800 text-right break-all"
         dir={dir || "rtl"}
       >
         {value || "—"}
@@ -351,7 +353,7 @@ export default function PostDetailPage({ post: postData }: Props) {
   ];
 
   return (
-    <div dir="rtl" className="min-h-screen bg-slate-100 text-slate-900">
+    <div dir="rtl" className="min-h-screen bg-slate-50 text-slate-900">
       {/* Sticky Header */}
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
@@ -543,13 +545,13 @@ export default function PostDetailPage({ post: postData }: Props) {
                       </div>
                     </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-4 sm:grid-cols-1">
                       <MetaRow
-                        label="Meta Title"
+                        label="عنوان گوگل"
                         value={post.meta?.seo?.meta_title}
                       />
                       <MetaRow
-                        label="Focus Keyword"
+                        label="کلمه کلیدی اصلی"
                         value={post.meta?.seo?.focus_keyword || "—"}
                       />
                     </div>
@@ -695,8 +697,13 @@ export default function PostDetailPage({ post: postData }: Props) {
                       value={post.meta?.seo?.breadcrumb_title}
                     />
                     <MetaRow
-                      label="Author Name"
-                      value={post.meta?.seo?.author_name || post.author_name}
+                      label="نام نویسنده"
+                      value={
+                        post.meta?.seo?.author_name ||
+                        post.author_name ||
+                        post.author?.name ||
+                        "ناشناس"
+                      }
                     />
                     <MetaRow
                       label="Author URL"
@@ -852,13 +859,16 @@ export default function PostDetailPage({ post: postData }: Props) {
                 <div className="flex justify-between">
                   <span className="text-slate-500">دسته‌بندی</span>
                   <span className="font-medium text-slate-800">
-                    {post.category_title || "بدون دسته"}
+                    {post.category_title || post.category?.title || "بدون دسته"}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">نویسنده</span>
                   <span className="font-medium text-slate-800">
-                    {post.author_name || post.meta?.seo?.author_name || "—"}
+                    {post.author_name ||
+                      post.meta?.seo?.author_name ||
+                      post.author?.name ||
+                      "—"}
                   </span>
                 </div>
                 <div className="flex justify-between">
