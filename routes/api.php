@@ -15,6 +15,7 @@ Route::middleware(['api', 'resolve'])->prefix('v1')->group(function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('posts', PostController::class);
     Route::post('/posts/upload-image', [PostController::class, 'uploadImage']);
+    Route::post('/posts/{post}/status', [PostController::class, 'updateStatus']);
 
 
     Route::prefix('auth')->group(function () {

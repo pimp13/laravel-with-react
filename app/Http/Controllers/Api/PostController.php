@@ -187,4 +187,21 @@ class PostController extends Controller
             ],
         );
     }
+
+
+    public function updateStatus(Request $request, Post $post): JsonResponse
+    {
+        $bodyData = $request->validate([
+            'is_active' => 'required|boolean'
+        ]);
+
+        $post->update([
+            'is_active' => $bodyData['is_active'],
+        ]);
+
+        return ApiResponse::success(data: [
+            'id' => (int) $post->id,
+            'is_active' => (bool) $post->is_active
+        ], message: 'وضعیت پست با موفقیت تغییر کرد');
+    }
 }
