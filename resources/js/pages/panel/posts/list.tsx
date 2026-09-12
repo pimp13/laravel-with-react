@@ -257,25 +257,44 @@ export default function PostsListPage() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   /* ---------------------------- Fetch Post Lists ----------------------------- */
-  const [postsList, setPostsList] = useState();
+  const [postsList, setPostsList] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetch("/api/v1/posts")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.success) {
-          setPostsList(data.data);
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+
+        const res = await fetch("/api/v1/posts");
+
+        if (!res.ok) {
+          throw new Error("خطا در دریافت مقالات");
         }
-      })
-      .catch((err) => {
-        toast.error(err.message || "خطا در برقراری با سرور");
-      });
+
+        const data = await res.json();
+
+        if (data?.success && Array.isArray(data.data)) {
+          setPostsList(data.data);
+        } else {
+          throw new Error(data?.message || "داده نامعتبر از سرور دریافت شد");
+        }
+      } catch (err) {
+        console.error(err);
+
+        toast.error(
+          err instanceof Error ? err.message : "خطا در برقراری ارتباط با سرور",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
   }, []);
-  console.log({ postsList });
 
   /* ---------------------------- Derived data ----------------------------- */
 
   const filteredPosts = useMemo(() => {
-    let result = [...posts];
+    let result = [...postsList];
 
     if (search.trim()) {
       const q = search.trim().toLowerCase();
@@ -284,7 +303,7 @@ export default function PostsListPage() {
           p.title.toLowerCase().includes(q) ||
           p.slug.toLowerCase().includes(q) ||
           p.excerpt.toLowerCase().includes(q) ||
-          p.author_name.toLowerCase().includes(q),
+          (p.author_name || "").toLowerCase().includes(q),
       );
     }
 
@@ -315,7 +334,7 @@ export default function PostsListPage() {
 
     return result;
   }, [
-    posts,
+    postsList,
     search,
     statusFilter,
     categoryFilter,
@@ -326,13 +345,13 @@ export default function PostsListPage() {
 
   const stats = useMemo(() => {
     return {
-      total: posts.length,
-      published: posts.filter((p) => p.visibility === "general").length,
-      drafts: posts.filter((p) => p.visibility === "draft").length,
-      private: posts.filter((p) => p.visibility === "private").length,
-      limited: posts.filter((p) => p.visibility === "limited").length,
+      total: postsList.length,
+      published: postsList.filter((p) => p.visibility === "general").length,
+      drafts: postsList.filter((p) => p.visibility === "draft").length,
+      private: postsList.filter((p) => p.visibility === "private").length,
+      limited: postsList.filter((p) => p.visibility === "limited").length,
     };
-  }, [posts]);
+  }, [postsList]);
 
   /* ---------------------------- Actions --------------------------------- */
 
@@ -581,7 +600,9 @@ export default function PostsListPage() {
         </div>
 
         {/* Content */}
-        {filteredPosts.length === 0 ? (
+        {loading ? (
+          <div>Loading...</div>
+        ) : filteredPosts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-20 text-center">
             <p className="text-lg font-medium text-slate-600">
               مقاله‌ای یافت نشد
