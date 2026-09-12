@@ -112,7 +112,8 @@ export default function PanelLayout({
 
   const isActive = (href?: string) => {
     if (!href) return false;
-    return url === href || url.startsWith(href + "/");
+    // || url.startsWith(href + "/")
+    return url === href;
   };
 
   return (
