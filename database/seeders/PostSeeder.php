@@ -22,34 +22,28 @@ class PostSeeder extends Seeder
 
         if ($authors->isEmpty()) {
 
-            $generateUsername = function (): string {
-                do {
-                    $username = 'ur_' . bin2hex(random_bytes(4)) . '_' . random_int(100, 999);
-                } while (User::where('username', $username)->exists());
 
-                return $username;
-            };
 
             $authors = collect([
                 User::create([
                     'name' => 'علی رضایی',
                     'email' => 'ali@example.com',
                     'password' => bcrypt('password'),
-                    'username' => $generateUsername(),
+                    'username' => generateUsername(prefix: 'ntl:'),
                 ]),
 
                 User::create([
                     'name' => 'سارا محمدی',
                     'email' => 'sara@example.com',
                     'password' => bcrypt('password'),
-                    'username' => $generateUsername(),
+                    'username' => generateUsername(prefix: 'ntl:'),
                 ]),
 
                 User::create([
                     'name' => 'محمد کریمی',
                     'email' => 'mohammad@example.com',
                     'password' => bcrypt('password'),
-                    'username' => $generateUsername(),
+                    'username' => generateUsername(prefix: 'ntl:'),
                 ]),
             ]);
         }
