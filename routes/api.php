@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
 
 Route::middleware(['api', 'resolve'])->prefix('v1')->group(function () {
     Route::apiResource('users', UserController::class);
@@ -35,8 +36,20 @@ Route::middleware(['api', 'resolve'])->prefix('v1')->group(function () {
 
 
 Route::get('/tests', function () {
-    $array = [1, 2, 3, 4, 5];
-    dd(
-        Arr::first($array, fn($val) => $val)
-    );
+    $resp = Http::withHeader('Cookie', '_lsr=s%3Ar2CoVIXT0Eg7k3qybmzCq0anGzIhfCco.gPRf8oUc46dTdt%2FS0rARQmRasMYWv%2B2HyYYTko%2BW4FQ')
+        ->post('https://padafand.edus.ir/emis-api/v1/data-provider/get-data-source', [
+            "serviceId" => "padafand.edus.ir",
+            "key" => "academy-V2/develop/test-v2",
+            "params" => [
+                "address" => "person_organ_profiles/create",
+                "method" => "POST",
+                "dservice" => "base_entity",
+                "type" => "activity",
+                "currentAcademy" => "l4l66ii51ry"
+            ]
+        ]);
+    $resp->throw();
+
+    dump($resp->json());
+    dd(data_get($resp->json(), 'Result.data.bodyData.address'));
 });
