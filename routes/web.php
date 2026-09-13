@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\UserController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -41,9 +42,7 @@ Route::middleware('resolve')->group(function () {
             });
 
 
-            Route::get('/users', function () {
-                return Inertia::render('panel/users/index');
-            });
+            Route::get('/users', [UserController::class, 'showPage']);
         });
 
     Route::middleware('guest')->group(function () {

@@ -38,85 +38,6 @@ interface UserItem {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Mock data (بعداً از Inertia props می‌آید)                                  */
-/* -------------------------------------------------------------------------- */
-
-const MOCK_USERS: UserItem[] = [
-  {
-    id: 1,
-    name: "علی رضایی",
-    username: "alireza",
-    email: "ali@example.com",
-    role: "administrator",
-    avatar: null,
-    posts_count: 24,
-    is_active: true,
-    registered_at: "2025-03-12T10:00:00",
-    last_login: "2026-09-12T08:30:00",
-  },
-  {
-    id: 2,
-    name: "سارا محمدی",
-    username: "sara.m",
-    email: "sara@example.com",
-    role: "editor",
-    avatar: null,
-    posts_count: 18,
-    is_active: true,
-    registered_at: "2025-06-20T14:20:00",
-    last_login: "2026-09-11T19:45:00",
-  },
-  {
-    id: 3,
-    name: "محمد کریمی",
-    username: "mohammadk",
-    email: "mohammad@example.com",
-    role: "author",
-    avatar: null,
-    posts_count: 9,
-    is_active: true,
-    registered_at: "2025-09-05T09:10:00",
-    last_login: "2026-09-10T11:20:00",
-  },
-  {
-    id: 4,
-    name: "زهرا حسینی",
-    username: "zahra.h",
-    email: "zahra@example.com",
-    role: "contributor",
-    avatar: null,
-    posts_count: 3,
-    is_active: true,
-    registered_at: "2026-01-15T16:40:00",
-    last_login: "2026-09-08T22:10:00",
-  },
-  {
-    id: 5,
-    name: "رضا نوری",
-    username: "reza.n",
-    email: "reza@example.com",
-    role: "subscriber",
-    avatar: null,
-    posts_count: 0,
-    is_active: false,
-    registered_at: "2026-04-02T11:00:00",
-    last_login: null,
-  },
-  {
-    id: 6,
-    name: "مریم اکبری",
-    username: "maryam",
-    email: "maryam@example.com",
-    role: "author",
-    avatar: null,
-    posts_count: 5,
-    is_active: true,
-    registered_at: "2026-05-18T13:30:00",
-    last_login: "2026-09-12T07:15:00",
-  },
-];
-
-/* -------------------------------------------------------------------------- */
 /* Helpers                                                                    */
 /* -------------------------------------------------------------------------- */
 
@@ -161,8 +82,12 @@ function getInitials(name: string) {
 /* Component                                                                  */
 /* -------------------------------------------------------------------------- */
 
-export default function UsersIndexPage() {
-  const [users] = useState<UserItem[]>(MOCK_USERS);
+export default function UsersIndexPage({
+  users: usersFromBackend,
+}: {
+  users: UserItem[];
+}) {
+  const [users] = useState<UserItem[]>(usersFromBackend);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<UserRole | "all">("all");
   const [statusFilter, setStatusFilter] = useState<
