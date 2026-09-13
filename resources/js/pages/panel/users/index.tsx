@@ -1,5 +1,7 @@
+import { useToast } from "@/components/ui/Toastalert";
+import AppLayout from "@/layouts/AppLayout";
 import PanelLayout from "@/layouts/PanelLayout";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import {
   CheckCircle2,
   MoreHorizontal,
@@ -33,7 +35,7 @@ interface UserItem {
   avatar?: string | null;
   posts_count: number;
   is_active: boolean;
-  registered_at: string;
+  created_at: string;
   last_login?: string | null;
 }
 
@@ -87,7 +89,7 @@ export default function UsersIndexPage({
 }: {
   users: UserItem[];
 }) {
-  const [users] = useState<UserItem[]>(usersFromBackend);
+  const [users, setUsers] = useState<UserItem[]>(usersFromBackend);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<UserRole | "all">("all");
   const [statusFilter, setStatusFilter] = useState<
@@ -95,6 +97,7 @@ export default function UsersIndexPage({
   >("all");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [openActionId, setOpenActionId] = useState<number | null>(null);
+  const toast = useToast();
 
   /* ---------------------------- Filtered list --------------------------- */
 
@@ -149,6 +152,42 @@ export default function UsersIndexPage({
       setSelectedIds([]);
     } else {
       setSelectedIds(filteredUsers.map((u) => u.id));
+    }
+  };
+
+  const toggleUserActive = async (id: number, is_active: boolean) => {
+    try {
+      const res = await fetch(`/api/v1/users/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ is_active }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.message || "عملیات ناموفق بود");
+      }
+
+      // ۱) آپدیت فوری UI
+      setUsers((prev) =>
+        prev.map((user) => (user.id === id ? { ...user, is_active } : user)),
+      );
+
+      // ۲) همگام‌سازی نرم با سرور (بدون لود کامل صفحه)
+      router.reload({
+        only: ["users"], // فقط prop مربوط به users را دوباره بگیر
+      });
+
+      toast.success(data.message || "وضعیت کاربر تغییر کرد");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "خطا در برقراری ارتباط با سرور";
+      toast.error(message);
     }
   };
 
@@ -320,7 +359,7 @@ export default function UsersIndexPage({
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                filteredUsers.map((user: UserItem) => (
                   <tr
                     key={user.id}
                     className={`transition hover:bg-slate-50/80 ${
@@ -417,7 +456,7 @@ export default function UsersIndexPage({
 
                     {/* تاریخ عضویت */}
                     <td className="px-4 py-3 text-xs text-slate-500">
-                      {formatDate(user.registered_at)}
+                      {formatDate(user.created_at)}
                     </td>
 
                     {/* عملیات */}
@@ -456,6 +495,9 @@ export default function UsersIndexPage({
                                 مشاهده پروفایل
                               </Link>
                               <button
+                                onClick={() =>
+                                  toggleUserActive(user.id, !user.is_active)
+                                }
                                 type="button"
                                 className="block w-full px-3 py-2 text-right text-xs text-slate-700 hover:bg-slate-50"
                               >
@@ -536,4 +578,6 @@ export default function UsersIndexPage({
   );
 }
 
-UsersIndexPage.layout = (page: React.ReactNode) => page;
+UsersIndexPage.layout = (page: React.ReactNode) => (
+  <AppLayout>{page}</AppLayout>
+);
