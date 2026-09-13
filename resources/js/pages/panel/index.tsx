@@ -62,10 +62,15 @@ function Widget({
   );
 }
 
-export default function PanelPage() {
+interface Props {
+  postsCount: number;
+}
+
+export default function PanelPage({ postsCount }: Props) {
+  console.log(postsCount);
   // این داده‌ها را از Inertia props بگیرید
   const stats = {
-    posts: 24,
+    posts: postsCount,
     pages: 8,
     comments: 56,
     users: 12,

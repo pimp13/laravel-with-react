@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Panel\LandingController;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,11 +20,7 @@ Route::middleware('resolve')->group(function () {
     Route::middleware('jwt')
         ->prefix('panel')
         ->group(function () {
-            Route::get('/', function () {
-                return Inertia::render('panel/index', [
-                    'dataTest' => 'Hello this data sending from laravel',
-                ]);
-            });
+            Route::get('/', [LandingController::class, 'renderPage']);
 
             Route::get('/create-article', function () {
                 return Inertia::render('panel/create-article');
