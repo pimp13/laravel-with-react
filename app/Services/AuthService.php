@@ -24,7 +24,8 @@ class AuthService
             $user = User::create([
                 'name' => $name ?? 'Anonymous',
                 'email' => $email,
-                'password' => Hash::make($password)
+                'password' => Hash::make($password),
+                'username' => generateUsername(prefix: 'ntl:')
             ]);
         } else {
             if (!Hash::check($password, $user->password)) {
@@ -53,6 +54,7 @@ class AuthService
             'name' => $bodyData['name'],
             'email' => $bodyData['email'],
             'password' => Hash::make($bodyData['password']),
+            'username' => generateUsername(prefix: 'ntl:')
         ]);
 
         return $user;
