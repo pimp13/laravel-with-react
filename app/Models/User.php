@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -37,6 +39,7 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
         'meta'      => 'array',
         'is_active' => 'boolean',
+        'role' => UserRole::class,
     ];
 
     public function posts(): HasMany
@@ -52,5 +55,30 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === UserRole::SUPER_ADMIN;
+    }
+
+    public function isEditor(): bool
+    {
+        return $this->role === UserRole::EDITOR;
+    }
+
+    public function isAuthor(): bool
+    {
+        return $this->role === UserRole::AUTHOR;
+    }
+
+    public function isContributor(): bool
+    {
+        return $this->role === UserRole::CONTRIBUTOR;
+    }
+
+    public function isSubscriber(): bool
+    {
+        return $this->role === UserRole::SUBSCRIBER;
     }
 }
