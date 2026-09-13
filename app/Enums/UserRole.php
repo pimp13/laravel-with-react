@@ -9,4 +9,15 @@ enum UserRole: string
     case AUTHOR = 'author';
     case CONTRIBUTOR = 'contributor';
     case SUBSCRIBER = 'subscriber';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::SUPER_ADMIN  => 'مدیرکل',
+            self::EDITOR  => 'ویرایشگر',
+            self::AUTHOR  => 'نویسنده',
+            self::CONTRIBUTOR => 'مشارکت‌کننده',
+            self::SUBSCRIBER => 'مشترک',
+        };
+    }
 }
