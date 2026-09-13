@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
@@ -16,8 +17,8 @@ class UserController extends Controller
      */
     public function index(): JsonResponse
     {
-        $users = User::orderBy('created_at', 'desc')->get();
-        return response()->json(["success" => true, 'data' => $users]);
+        $users = User::orderBy('created_at', 'desc')->withCount('posts')->get();
+        return ApiResponse::success(data: $users);
     }
 
     /**
