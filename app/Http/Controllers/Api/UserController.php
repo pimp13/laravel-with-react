@@ -6,18 +6,25 @@ use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private readonly UserService $userService
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index(): JsonResponse
     {
-        $users = User::orderBy('created_at', 'desc')->withCount('posts')->get();
+        $users = $this->userService->findAll();
         return ApiResponse::success(data: $users);
     }
 
@@ -82,6 +89,14 @@ class UserController extends Controller
                 'userId' => $user->id,
                 'isActive' => $user->is_active
             ]
+        ]);
+    }
+
+    public function showPage(): Response
+    {
+        $users = $this->userService->findAll();
+        return Inertia::render('panel/users/index', [
+            'users' => $users,
         ]);
     }
 }
