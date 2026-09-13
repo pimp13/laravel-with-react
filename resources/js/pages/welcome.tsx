@@ -24,43 +24,37 @@ const CATEGORIES = [
   {
     id: 1,
     name: "الکترونیک",
-    image:
-      "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop",
+    image: "https://placehold.co/400",
     count: 128,
   },
   {
     id: 2,
     name: "مد و پوشاک",
-    image:
-      "https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&h=300&fit=crop",
+    image: "https://placehold.co/400",
     count: 86,
   },
   {
     id: 3,
     name: "خانه و آشپزخانه",
-    image:
-      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop",
+    image: "https://placehold.co/400",
     count: 64,
   },
   {
     id: 4,
     name: "زیبایی و سلامت",
-    image:
-      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop",
+    image: "https://placehold.co/400",
     count: 52,
   },
   {
     id: 5,
     name: "ورزش و سفر",
-    image:
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba6851?w=400&h=300&fit=crop",
+    image: "https://placehold.co/400",
     count: 41,
   },
   {
     id: 6,
     name: "کتاب و لوازم تحریر",
-    image:
-      "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=300&fit=crop",
+    image: "https://placehold.co/400",
     count: 37,
   },
 ];
@@ -73,8 +67,7 @@ const PRODUCTS = [
     oldPrice: 3190000,
     rating: 4.8,
     reviews: 124,
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop",
+    image: "https://placehold.co/400",
     badge: "فروش ویژه",
     badgeColor: "bg-rose-500",
   },
@@ -85,8 +78,7 @@ const PRODUCTS = [
     oldPrice: null,
     rating: 4.6,
     reviews: 89,
-    image:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&h=500&fit=crop",
+    image: "https://placehold.co/400",
     badge: "جدید",
     badgeColor: "bg-emerald-500",
   },
@@ -97,8 +89,7 @@ const PRODUCTS = [
     oldPrice: 1200000,
     rating: 4.7,
     reviews: 56,
-    image:
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=500&fit=crop",
+    image: "https://placehold.co/400",
     badge: "پرفروش",
     badgeColor: "bg-amber-500",
   },
@@ -109,8 +100,7 @@ const PRODUCTS = [
     oldPrice: null,
     rating: 4.9,
     reviews: 203,
-    image:
-      "https://images.unsplash.com/photo-1511467687898-710065723680?w=500&h=500&fit=crop",
+    image: "https://placehold.co/400",
     badge: null,
     badgeColor: "",
   },
@@ -121,8 +111,7 @@ const PRODUCTS = [
     oldPrice: 3800000,
     rating: 4.5,
     reviews: 67,
-    image:
-      "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=500&h=500&fit=crop",
+    image: "https://placehold.co/400",
     badge: "تخفیف",
     badgeColor: "bg-rose-500",
   },
@@ -133,8 +122,7 @@ const PRODUCTS = [
     oldPrice: null,
     rating: 4.4,
     reviews: 41,
-    image:
-      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&h=500&fit=crop",
+    image: "https://placehold.co/400",
     badge: "جدید",
     badgeColor: "bg-emerald-500",
   },
@@ -145,8 +133,7 @@ const PRODUCTS = [
     oldPrice: 950000,
     rating: 4.7,
     reviews: 112,
-    image:
-      "https://images.unsplash.com/photo-1527814050807-0fd7dfba30ba?w=500&h=500&fit=crop",
+    image: "https://placehold.co/400",
     badge: null,
     badgeColor: "",
   },
@@ -157,8 +144,7 @@ const PRODUCTS = [
     oldPrice: 620000,
     rating: 4.3,
     reviews: 78,
-    image:
-      "https://images.unsplash.com/photo-1601784551446-20c9e38aac15?w=500&h=500&fit=crop",
+    image: "https://placehold.co/400",
     badge: "فروش ویژه",
     badgeColor: "bg-rose-500",
   },
