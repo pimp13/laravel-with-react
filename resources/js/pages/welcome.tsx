@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Search,
   ShoppingCart,
@@ -7,7 +7,6 @@ import {
   Menu,
   X,
   ChevronLeft,
-  ChevronRight,
   Star,
   Truck,
   Shield,
@@ -156,7 +155,11 @@ const BENEFITS = [
     title: "ارسال سریع",
     desc: "تحویل رایگان بالای ۵۰۰ هزار تومان",
   },
-  { icon: Shield, title: "ضمانت اصالت", desc: "تضمین اصل بودن تمام کالاها" },
+  {
+    icon: Shield,
+    title: "ضمانت اصالت",
+    desc: "تضمین اصل بودن تمام کالاها",
+  },
   {
     icon: RotateCcw,
     title: "۷ روز بازگشت",
@@ -169,6 +172,15 @@ const BENEFITS = [
   },
 ];
 
+const NAV_ITEMS = [
+  "همه محصولات",
+  "شگفت‌انگیزها",
+  "برندها",
+  "جدیدترین‌ها",
+  "پرفروش‌ها",
+  "تخفیف‌دارها",
+];
+
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                    */
 /* -------------------------------------------------------------------------- */
@@ -178,13 +190,12 @@ function formatPrice(price: number) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Small Components                                                           */
+/* Product Card                                                               */
 /* -------------------------------------------------------------------------- */
 
 function ProductCard({ product }: { product: (typeof PRODUCTS)[0] }) {
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:shadow-lg">
-      {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-slate-50">
         <img
           src={product.image}
@@ -206,9 +217,8 @@ function ProductCard({ product }: { product: (typeof PRODUCTS)[0] }) {
         </button>
       </div>
 
-      {/* Body */}
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="line-clamp-2 text-sm font-medium text-slate-800 leading-6">
+        <h3 className="line-clamp-2 text-sm font-medium leading-6 text-slate-800">
           {product.title}
         </h3>
 
@@ -253,6 +263,18 @@ export default function StoreHomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // قفل اسکرول وقتی منو باز است
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <div dir="rtl" className="min-h-screen bg-slate-50 text-slate-900">
       {/* ===================== TOP BAR ===================== */}
@@ -273,16 +295,17 @@ export default function StoreHomePage() {
       {/* ===================== HEADER ===================== */}
       <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:h-20">
-          {/* Mobile menu */}
+          {/* دکمه همبرگر موبایل */}
           <button
             type="button"
-            className="lg:hidden rounded-lg p-2 text-slate-600 hover:bg-slate-100"
+            className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
             onClick={() => setMobileMenuOpen(true)}
+            aria-label="باز کردن منو"
           >
             <Menu className="h-5 w-5" />
           </button>
 
-          {/* Logo */}
+          {/* لوگو */}
           <a href="/" className="flex shrink-0 items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-sm font-bold text-white">
               S
@@ -290,7 +313,7 @@ export default function StoreHomePage() {
             <span className="hidden text-lg font-bold sm:block">استور من</span>
           </a>
 
-          {/* Search */}
+          {/* جستجو */}
           <div className="relative mx-auto hidden max-w-xl flex-1 md:block">
             <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
@@ -302,7 +325,7 @@ export default function StoreHomePage() {
             />
           </div>
 
-          {/* Actions */}
+          {/* اکشن‌ها */}
           <div className="mr-auto flex items-center gap-1 sm:gap-2">
             <button
               type="button"
@@ -328,24 +351,17 @@ export default function StoreHomePage() {
               className="relative rounded-lg p-2.5 text-slate-600 hover:bg-slate-100"
             >
               <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -left-0.5 -top-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
+              <span className="absolute -left-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
                 3
               </span>
             </a>
           </div>
         </div>
 
-        {/* Nav */}
+        {/* ناوبری دسکتاپ */}
         <nav className="hidden border-t border-slate-100 lg:block">
           <div className="mx-auto flex max-w-7xl items-center gap-1 px-6">
-            {[
-              "همه محصولات",
-              "شگفت‌انگیزها",
-              "برندها",
-              "جدیدترین‌ها",
-              "پرفروش‌ها",
-              "تخفیف‌دارها",
-            ].map((item) => (
+            {NAV_ITEMS.map((item) => (
               <a
                 key={item}
                 href="#"
@@ -358,32 +374,46 @@ export default function StoreHomePage() {
         </nav>
       </header>
 
-      {/* Mobile drawer */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[60] lg:hidden">
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="absolute bottom-0 right-0 top-0 w-72 bg-white p-5 shadow-xl">
-            <div className="mb-6 flex items-center justify-between">
-              <span className="font-bold">منو</span>
-              <button type="button" onClick={() => setMobileMenuOpen(false)}>
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+      {/* ===================== MOBILE MENU (کشویی) ===================== */}
+      <div
+        className={`fixed inset-0 z-[60] lg:hidden ${
+          mobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      >
+        {/* Overlay */}
+        <div
+          className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ease-out ${
+            mobileMenuOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setMobileMenuOpen(false)}
+        />
+
+        {/* پنل منو – انیمیشن کشویی از راست */}
+        <div
+          className={`absolute bottom-0 right-0 top-0 flex w-72 flex-col bg-white shadow-xl transition-transform duration-300 ease-out ${
+            mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between border-b border-slate-100 p-5">
+            <span className="font-bold text-slate-800">منو</span>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100"
+              aria-label="بستن منو"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3">
             <div className="space-y-1">
-              {[
-                "همه محصولات",
-                "شگفت‌انگیزها",
-                "برندها",
-                "جدیدترین‌ها",
-                "پرفروش‌ها",
-              ].map((item) => (
+              {NAV_ITEMS.map((item) => (
                 <a
                   key={item}
                   href="#"
                   className="block rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   {item}
                 </a>
@@ -391,10 +421,11 @@ export default function StoreHomePage() {
             </div>
           </div>
         </div>
-      )}
+      </div>
 
+      {/* ===================== MAIN ===================== */}
       <main>
-        {/* ===================== HERO ===================== */}
+        {/* Hero */}
         <section className="relative overflow-hidden bg-slate-900">
           <div className="absolute inset-0">
             <img
@@ -438,7 +469,7 @@ export default function StoreHomePage() {
           </div>
         </section>
 
-        {/* ===================== BENEFITS ===================== */}
+        {/* Benefits */}
         <section className="border-b border-slate-200 bg-white">
           <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 py-8 sm:grid-cols-4 sm:px-6">
             {BENEFITS.map((item) => (
@@ -457,7 +488,7 @@ export default function StoreHomePage() {
           </div>
         </section>
 
-        {/* ===================== CATEGORIES ===================== */}
+        {/* Categories */}
         <section
           id="categories"
           className="mx-auto max-w-7xl px-4 py-14 sm:px-6"
@@ -507,7 +538,7 @@ export default function StoreHomePage() {
           </div>
         </section>
 
-        {/* ===================== PROMO BANNERS ===================== */}
+        {/* Promo Banners */}
         <section className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="grid gap-4 md:grid-cols-2">
             <a
@@ -548,7 +579,7 @@ export default function StoreHomePage() {
           </div>
         </section>
 
-        {/* ===================== PRODUCTS ===================== */}
+        {/* Products */}
         <section id="products" className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
           <div className="mb-8 flex items-end justify-between">
             <div>
@@ -575,7 +606,7 @@ export default function StoreHomePage() {
           </div>
         </section>
 
-        {/* ===================== NEWSLETTER ===================== */}
+        {/* Newsletter */}
         <section className="border-y border-slate-200 bg-white">
           <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
             <div className="mx-auto max-w-xl text-center">
