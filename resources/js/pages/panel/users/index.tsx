@@ -354,9 +354,13 @@ export default function UsersIndexPage({
                           <p className="font-medium text-slate-800 line-clamp-1">
                             {user.name}
                           </p>
-                          <p className="text-xs text-slate-400" dir="ltr">
+                          <a
+                            href="#"
+                            className="text-xs text-[#2271b1] underline"
+                            dir="ltr"
+                          >
                             @{user.username}
-                          </p>
+                          </a>
                         </div>
                       </div>
                     </td>
