@@ -445,7 +445,7 @@ export default function PostsListPage() {
       </Head>
 
       <PanelLayout title="مقالات">
-        <div dir="rtl" className="min-h-screen ">
+        <div dir="rtl" className="min-h-screen">
           {/* Header */}
           <header className="sticky top-7 z-30 border-b border-slate-200 bg-white/95 backdrop-blur rounded-2xl">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">

@@ -64,16 +64,18 @@ function Widget({
 
 interface Props {
   postsCount: number;
+  usersCount: number;
+  latestPosts: any;
 }
 
-export default function PanelPage({ postsCount }: Props) {
-  console.log(postsCount);
+export default function PanelPage({ postsCount, usersCount, latestPosts }: Props) {
+  console.log(latestPosts);
   // این داده‌ها را از Inertia props بگیرید
   const stats = {
     posts: postsCount,
     pages: 8,
     comments: 56,
-    users: 12,
+    users: usersCount,
   };
 
   const recentPosts = [
@@ -134,7 +136,7 @@ export default function PanelPage({ postsCount }: Props) {
           value={stats.posts}
           icon={<FileText className="h-5 w-5 text-blue-600" />}
           color="bg-blue-50"
-          href="/panel/posts"
+          href="/panel/posts/list"
         />
         <StatCard
           title="صفحات"
@@ -166,7 +168,7 @@ export default function PanelPage({ postsCount }: Props) {
             title="نوشته‌های اخیر"
             action={
               <Link
-                href="/panel/posts"
+                href="/panel/posts/list"
                 className="text-xs text-[#2271b1] hover:underline flex items-center gap-1"
               >
                 مشاهده همه

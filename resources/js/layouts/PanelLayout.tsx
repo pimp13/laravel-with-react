@@ -117,7 +117,10 @@ export default function PanelLayout({
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#f0f0f1] text-slate-800">
+    <div
+      dir="rtl"
+      className="min-h-screen bg-[#f0f0f1] text-slate-800 overflow-hidden"
+    >
       {/* ========== TOP BAR (مثل نوار بالای وردپرس) ========== */}
       <header className="fixed top-0 right-0 left-0 z-50 flex h-8 items-center bg-[#1d2327] text-white text-xs">
         <div className="flex w-full items-center justify-between px-3">
