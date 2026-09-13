@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CategoryController extends Controller
 {
@@ -69,5 +71,10 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function showPage(): Response
+    {
+        return Inertia::render('panel/category/index');
     }
 }

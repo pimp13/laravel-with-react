@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\UserController;
 use App\Models\Post;
@@ -43,6 +44,7 @@ Route::middleware('resolve')->group(function () {
 
 
             Route::get('/users', [UserController::class, 'showPage']);
+            Route::get('/category', [CategoryController::class, 'showPage']);
         });
 
     Route::middleware('guest')->group(function () {

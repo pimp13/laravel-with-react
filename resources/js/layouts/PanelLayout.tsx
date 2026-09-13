@@ -37,7 +37,7 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "همه نوشته‌ها", href: "/panel/posts/list" },
       { label: "افزودن نوشته", href: "/panel/posts/create" },
-      { label: "دسته‌ها", href: "/panel/categories" },
+      { label: "دسته‌ها", href: "/panel/category" },
       { label: "برچسب‌ها", href: "/panel/tags" },
     ],
   },
