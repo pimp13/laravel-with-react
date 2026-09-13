@@ -42,6 +42,8 @@ Route::middleware('resolve')->group(function () {
 
             Route::get('/users', [UserController::class, 'showPage']);
             Route::get('/category', [CategoryController::class, 'showPage']);
+
+            Route::get('/settings', fn() =>  Inertia::render('panel/settings/index'));
         });
 
     Route::middleware('guest')->group(function () {
