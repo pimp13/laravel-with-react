@@ -1111,9 +1111,7 @@ export default function CreatePostPage() {
   //     setSaving(false);
   //   }
   // };
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const createNewPostLogic = async () => {
     if (!form.title.trim()) {
       window.alert("عنوان مقاله الزامی است.");
       return;
@@ -1190,6 +1188,16 @@ export default function CreatePostPage() {
       setSaving(false);
     }
   };
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    await createNewPostLogic();
+  };
+
+  const handleSaveToDraft = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    setField("visibility", "draft");
+    await createNewPostLogic();
+  };
 
   /* ------------------------------ Render ---------------------------------- */
 
@@ -1202,8 +1210,8 @@ export default function CreatePostPage() {
 
   return (
     <PanelLayout title="مشاهده پست">
-      <div dir="rtl" className="min-h-screen bg-slate-100 text-slate-900">
-        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+      <div dir="rtl" className="min-h-screen ">
+        <header className="sticky top-7 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
             <div>
               <div className="flex items-center gap-3">
@@ -1220,7 +1228,7 @@ export default function CreatePostPage() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setField("visibility", "draft")}
+                onClick={handleSaveToDraft}
                 className="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
               >
                 ذخیره پیش‌نویس

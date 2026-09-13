@@ -35,7 +35,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "نوشته‌ها",
     icon: <FileText className="h-5 w-5" />,
     children: [
-      { label: "همه نوشته‌ها", href: "/panel/posts" },
+      { label: "همه نوشته‌ها", href: "/panel/posts/list" },
       { label: "افزودن نوشته", href: "/panel/posts/create" },
       { label: "دسته‌ها", href: "/panel/categories" },
       { label: "برچسب‌ها", href: "/panel/tags" },
