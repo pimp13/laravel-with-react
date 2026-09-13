@@ -4,6 +4,7 @@ use App\Http\Middleware\GuestMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\JwtCookieMiddleware;
 use App\Http\Middleware\ResolveJwtUserMiddleware;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -31,7 +32,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'jwt' => JwtCookieMiddleware::class,
             'guest' => GuestMiddleware::class,
-            'resolve' => ResolveJwtUserMiddleware::class
+            'resolve' => ResolveJwtUserMiddleware::class,
+            'role' => RoleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
