@@ -86,9 +86,12 @@ function getInitials(name: string) {
 
 export default function UsersIndexPage({
   users: usersFromBackend,
+  cowsay,
 }: {
   users: UserItem[];
+  cowsay: string;
 }) {
+  console.log(cowsay);
   const [users, setUsers] = useState<UserItem[]>(usersFromBackend);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<UserRole | "all">("all");

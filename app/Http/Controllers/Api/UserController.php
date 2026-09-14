@@ -10,6 +10,7 @@ use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -94,9 +95,11 @@ class UserController extends Controller
 
     public function showPage(): Response
     {
+        $resp = Http::get('http://localhost:3000')->json();
         $users = $this->userService->findAll();
         return Inertia::render('panel/users/index', [
             'users' => $users,
+            'cowsay' => $resp['cowsay']
         ]);
     }
 }
