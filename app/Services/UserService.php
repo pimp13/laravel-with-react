@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class UserService
 {
@@ -15,8 +16,10 @@ class UserService
         //
     }
 
-    public function findAll(): Collection
+    public function findAll()
     {
-        return User::orderBy('created_at', 'desc')->withCount('posts')->get();
+        return Cache::remember("users.list.with.posts.count", now()->addHours(24), function () {
+            return User::orderBy('created_at', 'desc')->withCount('posts')->get()->toArray();
+        });
     }
 }
