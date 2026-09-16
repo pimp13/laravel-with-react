@@ -14,6 +14,7 @@
         "@inertiajs/react": "^3.0.0",
         "@inertiajs/vite": "^3.0.0",
         "@tailwindcss/vite": "^4.1.11",
+        "@tanstack/react-query": "^5.103.0",
         "@tiptap/extension-color": "^3.31.3",
         "@tiptap/extension-highlight": "^3.31.3",
         "@tiptap/extension-image": "^3.31.3",

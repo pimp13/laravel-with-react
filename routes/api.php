@@ -14,6 +14,8 @@ Route::middleware(['api', 'resolve'])->prefix('v1')->group(function () {
 
 
     Route::apiResource('categories', CategoryController::class);
+    Route::patch('/categories/{category}/toggle-active', [CategoryController::class, 'toggleActive']);
+
     Route::apiResource('posts', PostController::class);
     Route::post('/posts/upload-image', [PostController::class, 'uploadImage']);
     Route::patch('/posts/{post}/status', [PostController::class, 'updateStatus']);

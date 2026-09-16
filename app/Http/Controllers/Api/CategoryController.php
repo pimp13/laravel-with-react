@@ -42,11 +42,7 @@ class CategoryController extends Controller
         $bodyData['meta'] = $request->description ? ['description' => $request->description] : null;
         $category = Category::create($bodyData);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'category is created successfully',
-            'data' => $category,
-        ]);
+        return back()->with('message', 'دسته‌بندی با موفقیت ثبت و ساخته شد');
     }
 
     /**
@@ -75,6 +71,24 @@ class CategoryController extends Controller
 
     public function showPage(): Response
     {
-        return Inertia::render('panel/category/index');
+        $categories = Category::whereNull('parent_id')
+            ->with('childrenRecursive')
+            ->withCount('posts')
+            ->orderByDesc('posts_count')
+            ->orderByDesc('created_at')
+            ->get();
+        return Inertia::render('panel/category/index', [
+            'categories' => $categories
+        ]);
+    }
+
+
+    public function toggleActive(Category $category)
+    {
+        $category->update([
+            'is_active' => !$category->is_active
+        ]);
+
+        return back();
     }
 }

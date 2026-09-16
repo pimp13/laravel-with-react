@@ -1,25 +1,30 @@
-import { generateSlug } from "@/lib/helpers";
-import { Dispatch, useState } from "react";
-import { Category } from "../types";
+import { useState } from "react";
+import { router } from "@inertiajs/react";
 import { PlusIcon } from "lucide-react";
+import { Category } from "../types";
+import { useToast } from "@/components/ui/Toastalert";
 
-type AddCategoryFormProps = {
+type Props = {
   categories: Category[];
-  setCategories: Dispatch<React.SetStateAction<Category[]>>;
 };
-export function AddCategoryForm({
-  categories,
-  setCategories,
-}: AddCategoryFormProps) {
-  // فرم افزودن دسته
+
+export function AddCategoryForm({ categories }: Props) {
   const [form, setForm] = useState({
     title: "",
     slug: "",
     description: "",
     parent_id: "" as number | "",
   });
+  const toast = useToast();
   const [slugManual, setSlugManual] = useState(false);
-  /* ---------------------------- Form handlers --------------------------- */
+  const [processing, setProcessing] = useState(false);
+
+  const generateSlug = (value: string) =>
+    value
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w\-]+/g, "");
 
   const handleTitleChange = (value: string) => {
     setForm((prev) => ({
@@ -31,23 +36,33 @@ export function AddCategoryForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title.trim()) return;
+    if (!form.title.trim() || processing) return;
 
-    // فعلاً فقط UI — بعداً به API وصل می‌شود
-    const newCategory: Category = {
-      id: Date.now(),
-      title: form.title.trim(),
-      slug: form.slug.trim() || generateSlug(form.title),
-      description: form.description.trim(),
-      parent_id: form.parent_id === "" ? null : Number(form.parent_id),
-      posts_count: 0,
-      is_active: true,
-      created_at: new Date().toISOString(),
-    };
+    setProcessing(true);
 
-    setCategories((prev) => [newCategory, ...prev]);
-    setForm({ title: "", slug: "", description: "", parent_id: "" });
-    setSlugManual(false);
+    router.post(
+      "/api/v1/categories",
+      {
+        title: form.title.trim(),
+        slug: form.slug.trim() || generateSlug(form.title),
+        description: form.description.trim() || null,
+        parent_id: form.parent_id === "" ? null : Number(form.parent_id),
+        is_active: true,
+      },
+      {
+        preserveScroll: true,
+        onSuccess: () => {
+          // فرم را پاک کن
+          setForm({ title: "", slug: "", description: "", parent_id: "" });
+          setSlugManual(false);
+          toast.success("دسته‌بندی جدید شما با موفقیت ثبت و ایجاد شد.");
+        },
+        onError: (err: any) => {
+          toast.error(err || "دسته‌بندی جدید شما با موفقیت ثبت و ایجاد شد.");
+        },
+        onFinish: () => setProcessing(false),
+      },
+    );
   };
 
   const parentCategories = categories.filter((c) => c.parent_id === null);
@@ -76,9 +91,6 @@ export function AddCategoryForm({
               className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-[#2271b1] focus:ring-2 focus:ring-[#2271b1]/20"
               required
             />
-            <p className="mt-1 text-xs text-slate-400">
-              نامی که در سایت نمایش داده می‌شود.
-            </p>
           </div>
 
           {/* نامک */}
@@ -108,9 +120,6 @@ export function AddCategoryForm({
               dir="ltr"
               className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-[#2271b1] focus:ring-2 focus:ring-[#2271b1]/20"
             />
-            <p className="mt-1 text-xs text-slate-400">
-              نسخه URL-friendly نام.
-            </p>
           </div>
 
           {/* دسته مادر */}
@@ -136,9 +145,6 @@ export function AddCategoryForm({
                 </option>
               ))}
             </select>
-            <p className="mt-1 text-xs text-slate-400">
-              دسته‌ها می‌توانند سلسله‌مراتبی باشند.
-            </p>
           </div>
 
           {/* توضیحات */}
@@ -149,25 +155,19 @@ export function AddCategoryForm({
             <textarea
               value={form.description}
               onChange={(e) =>
-                setForm((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
+                setForm((prev) => ({ ...prev, description: e.target.value }))
               }
               rows={3}
-              placeholder="توضیح کوتاه درباره این دسته..."
               className="w-full resize-none rounded-lg border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-[#2271b1] focus:ring-2 focus:ring-[#2271b1]/20"
             />
-            <p className="mt-1 text-xs text-slate-400">
-              اختیاری است. در برخی پوسته‌ها نمایش داده می‌شود.
-            </p>
           </div>
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-[#2271b1] py-2.5 text-sm font-medium text-white hover:bg-[#135e96]"
+            disabled={processing}
+            className="w-full rounded-lg bg-[#2271b1] py-2.5 text-sm font-medium text-white hover:bg-[#135e96] disabled:opacity-60"
           >
-            افزودن دسته جدید
+            {processing ? "در حال ذخیره..." : "افزودن دسته جدید"}
           </button>
         </form>
       </div>
