@@ -42,7 +42,7 @@ class CategoryController extends Controller
         $bodyData['meta'] = $request->description ? ['description' => $request->description] : null;
         $category = Category::create($bodyData);
 
-        return back()->with('message', 'دسته‌بندی با موفقیت ثبت و ساخته شد');
+        return Inertia::flash('message', 'دسته بندی با موفقیت ثبت و ساخته شد')->back();
     }
 
     /**

@@ -1,5 +1,5 @@
 import PanelLayout from "@/layouts/PanelLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
 import React, { useMemo, useState } from "react";
 import { Category } from "./types";
 import { AddCategoryForm } from "./components/AddCategoryForm";

@@ -3,7 +3,7 @@ import { usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export function FlashMessage() {
-  const { flash } = usePage().props as {
+  const { flash } = usePage() as {
     flash?: {
       message?: string;
     };
