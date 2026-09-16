@@ -1,4 +1,5 @@
 // resources/js/Layouts/AdminLayout.tsx
+import { toPersianDigits } from "@/lib/toPersianDigits";
 import { Link, usePage } from "@inertiajs/react";
 import {
   BarChart3,
@@ -134,6 +135,9 @@ export default function PanelLayout({
             <Link href="/panel" className="hover:bg-white/10 px-2 py-1 rounded">
               پیشخوان
             </Link>
+            <span className="hover:bg-white/10 px-2 py-1 rounded">
+              نسخه: {toPersianDigits("1.0.0")}
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <span className="hidden sm:inline text-white/70">سلام، مدیر</span>
