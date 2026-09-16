@@ -64,9 +64,10 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return Inertia::flash('message', 'دسته بندی باموفقیت حذف شد')->back();
     }
 
     public function showPage(): Response

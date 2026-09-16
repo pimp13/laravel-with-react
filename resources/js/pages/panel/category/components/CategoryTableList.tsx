@@ -46,7 +46,7 @@ export function CategoryTableList({
     setProcessingId(id);
     setOpenActionId(null);
 
-    router.delete(`/panel/categories/${id}`, {
+    router.delete(`/api/v1/categories/${id}`, {
       preserveScroll: true,
       onFinish: () => setProcessingId(null),
     });
